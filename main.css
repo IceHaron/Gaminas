@@ -1,0 +1,31 @@
+h1 {
+ color: white;
+}
+a {
+  color: blue;
+}
+
+.clear {
+  clear: both;
+}
+#main {
+  width: 100%;
+}
+#titleholder {
+  width: 50%;
+  float: left;
+  background-color: green;
+}
+#righthead {
+  width: 200px;
+  float: right;
+  padding: 10px;
+  background-color: yellowgreen;
+}
+#loginholder {
+  height: 32px;
+  float: left;
+}
+#login {
+  padding: 5px;
+}
