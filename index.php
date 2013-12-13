@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <head>
   <title>Gaminas</title>
-  <link type="text/css" rel="stylesheet" href="main.css"></link>
+  <link type="text/css" rel="stylesheet" href="css/main.css"></link>
 </head>
 <?php
 $str = 'http://steamcommunity.com/profiles/76561197991665605/?xml=1';
@@ -19,7 +19,7 @@ $avatar = $json->response->players[0]->avatar;
         <h1>Gaminas: let`s change!</h1>
       </div>
       <div id="righthead">
-        <a target="blank" href="<?=$profurl?>"><div id="loginholder"><span id="login"><?=$username?></span><img src="<?=$avatar?>"/></div></a>
+        <a target="blank" href="<?=$profurl?>"><div id="loginholder"><div id="login"><?=$username?></div><img id="head_ava" src="<?=$avatar?>"/></div></a>
       </div>
     </div>
     <div class="clear"></div>
