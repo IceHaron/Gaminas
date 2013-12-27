@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <title>Gaminas</title>
+  <link type="text/css" rel="stylesheet" href="css/main.css"></link>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+  <script src="js/main.js"></script>
+</head>
+
+<body>
+  <div id="main">
+    <div id="header">
+      <div id="titleholder">
+        <h1>Gaminas: let`s change!</h1>
+      </div>
+      <div id="righthead">
+        <? if ($uid === 0) { ?>
+        <script src="//ulogin.ru/js/ulogin.js"></script>
+        <div id="uLogin" data-ulogin="display=buttons;fields=uid;providers=steam;hidden=;redirect_uri=;receiver=http%3A%2F%2Fgaminas.ice%2Fxd_custom.html;callback=login">
+          <img src="img/steam.png" data-uloginbutton="steam"/>
+        </div>
+        <? } else { ?>
+        <a target="blank" href="<?=$profurl?>"><div id="loginholder"><div id="login"><?=$username?></div><img id="head_ava" src="<?=$avatar?>"/></div></a>
+        <button id="logoff">Logoff</button>
+        <? } ?>
+      </div>
+    </div>
+    <div id="body">
+      <div id="library_caption" class="main_caption">Библиотека</div>
+      <div id="library">
+        <? foreach ($gamearray as $num => $gameinfo) {?>
+          <div class="gamefield">
+            <img class="gamelogo" src="http://media.steampowered.com/steamcommunity/public/images/apps/<?=$gameinfo->appid . '/' . $gameinfo->img_logo_url;?>.jpg">
+            <span class="gamename"><?=$gameinfo->name?></span>
+          </div>
+        <?}?>
+        <div class="clear"></div>
+      </div>
+      <div id="inventory_caption" class="main_caption">Инвентарь</div>
+      <iframe id="inventory" src="http://steamcommunity.com/profiles/<?=$uid?>/inventory/#753"></iframe>
+      <div class="clear"></div>
+    </div>
+    <div class="clear"></div>
+  </div>
+</body>
+
+<!--
+
+Steam API key for gaminas.ru: 0BE85074D210A01F70B48205C44D1D56 
+Остановился на чтении вот этой странички про .htaccess: http://www.htaccess.net.ru/doc/Redirect/Redirect.php
+
+Моя учетка в XML-формате: http://steamcommunity.com/id/ice_haron/?xml=1 или http://steamcommunity.com/profiles/76561197991665605/?xml=1
+  После любой почти ссылки на стиме добавляем ?xml=1 и получаем эту страницу в формате XML
+  
+Моя учетка в JSON-формате: http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=0BE85074D210A01F70B48205C44D1D56&steamids=76561197991665605
+  С JSON все немного сложнее, но тоже не суперхардкор. key - это мой API-key, а steamids - мой айдишник
+  
+Мой каталог игрушек в XML-формате: http://steamcommunity.com/id/Ice_Haron/games/?tab=all&l=russian&xml=1
+  Тут все понятно
+  
+Мой каталог игрушек в JSON-формате: http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=0BE85074D210A01F70B48205C44D1D56&steamid=76561197991665605&format=json&include_appinfo=1
+  Тут веселее: если не написать include_appinfo=1, то в ответе будет только айдишник игрушки и сколько часов сыграно
+  
+Пример юзания img_icon_url: http://media.steampowered.com/steamcommunity/public/images/apps/210770/4cdfa1d19be460374a111b718ce3a204f21ea1dc.jpg
+  После apps идет айдишник игрули, а потом идет имя файла, которое прилетает в ответе
+  
+Пример юзания img_logo_url: http://media.steampowered.com/steamcommunity/public/images/apps/210770/333a8c65480bb85148bb3a185843a8520ae5d90f.jpg
+  Та же петрушка
+  
+Пример юзания картинки из инвентаря: http://cdn.steamcommunity.com/economy/image/dDtWCk0tb3zFHlGsyQM9Nsx3nLsJXWEyENrY-XDiZJWxLX7pBiY-by-KQVCtOi-vwnvHqkMCPX5GhN3jN6YunLk8dfsRejF7ZtZaALN_NfmSN9j_AkI=/330x192
+  Тут все хитрее: видать парсер разбивает эту ссылень и у себя там как-то что-то делает, ибо у картинки нет разрешения, а после последнего слеша можно указать разрешение картинки и он отдает ее в этом разрешении.
+  Там есть какие-то пределы, типа он не может отдать картинку в большем разрешении, чем она у них лежит, но в общем, все работает на ура, возможно, это можно юзать.
+  
+Интересный сайтец, вводим юзернейм или айдишник и получаем дохера инфы: http://heavenanvil.ru/
+  Достаточно неплохая инфа, для разгона и вспоминания забытого пойдет.
+  
+Ну и статейка на хабрахабре про Steam API: http://habrahabr.ru/post/172223/
+  Коротенькая оказалась, уже прочитал, однако полезная.
+
+-->

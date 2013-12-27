@@ -1,7 +1,7 @@
-AuthName "To view logs you have to login"
-AuthType Basic
-AuthUserFile C:/www/gaminas/logs/.htpasswd
-require valid-user
+#AuthName "To view logs you have to login"
+#AuthType Basic
+#AuthUserFile C:/www/gaminas/logs/.htpasswd
+#require valid-user
 
 ErrorDocument 401 "Bad username or password
 ErrorDocument 404 /error/404.html
