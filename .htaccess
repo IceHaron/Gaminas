@@ -1,7 +1,18 @@
-#AuthName "To view logs you have to login"
-#AuthType Basic
-#AuthUserFile C:/www/gaminas/logs/.htpasswd
-#require valid-user
+SetEnv APPLICATION_ENV development 
+RewriteEngine on
+
+#RewriteBase /
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} (.*html)|(.*php)
+RewriteRule ^(.*)$ index.php [NC,L]
 
 ErrorDocument 401 "Bad username or password
-ErrorDocument 404 /error/404.html
+ErrorDocument 403 /error/403.php
+ErrorDocument 404 /error/404.php
+
+php_flag display_startup_errors on
+php_flag display_errors on
+php_flag html_errors on
+php_value max_input_vars 5000
+

@@ -2,9 +2,9 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
   <title>Gaminas</title>
-  <link type="text/css" rel="stylesheet" href="css/main.css"></link>
+  <link type="text/css" rel="stylesheet" href="<?=$source?>/css/main.css"></link>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-  <script src="js/main.js"></script>
+  <script src="<?=$source?>/js/main.js"></script>
 </head>
 
 <body>
@@ -17,7 +17,7 @@
         <? if ($uid === 0) { ?>
         <script src="//ulogin.ru/js/ulogin.js"></script>
         <div id="uLogin" data-ulogin="display=buttons;fields=uid;providers=steam;hidden=;redirect_uri=;receiver=http%3A%2F%2Fgaminas.ice%2Fxd_custom.html;callback=login">
-          <img src="img/steam.png" data-uloginbutton="steam"/>
+          <img src="<?=$source?>/img/steam.png" data-uloginbutton="steam"/>
         </div>
         <? } else { ?>
         <a target="blank" href="<?=$profurl?>"><div id="loginholder"><div id="login"><?=$username?></div><img id="head_ava" src="<?=$avatar?>"/></div></a>
@@ -26,18 +26,7 @@
       </div>
     </div>
     <div id="body">
-      <div id="library_caption" class="main_caption">Библиотека</div>
-      <div id="library">
-        <? foreach ($gamearray as $num => $gameinfo) {?>
-          <div class="gamefield">
-            <img class="gamelogo" src="http://media.steampowered.com/steamcommunity/public/images/apps/<?=$gameinfo->appid . '/' . $gameinfo->img_logo_url;?>.jpg">
-            <span class="gamename"><?=$gameinfo->name?></span>
-          </div>
-        <?}?>
-        <div class="clear"></div>
-      </div>
-      <div id="inventory_caption" class="main_caption">Инвентарь</div>
-      <iframe id="inventory" src="http://steamcommunity.com/profiles/<?=$uid?>/inventory/#753"></iframe>
+    
       <div class="clear"></div>
     </div>
     <div class="clear"></div>
