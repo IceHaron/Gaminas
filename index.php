@@ -12,9 +12,9 @@ class root {
 
 $page = new root();
 $source = 'http://' . $page->path . '/source';
-var_dump($source);
+// var_dump($source);
 
 require_once('/php/index.php');
-INCLUDE('/html/index.html');
+require_once('/html/index.html');
 
 ?>
