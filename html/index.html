@@ -2,9 +2,9 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
   <title>Gaminas</title>
-  <link type="text/css" rel="stylesheet" href="<?=$source?>/css/main.css"></link>
+  <link type="text/css" rel="stylesheet" href="<?=$GAMINAS['source']?>/css/main.css"></link>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-  <script src="<?=$source?>/js/main.js"></script>
+  <script src="<?=$GAMINAS['source']?>/js/main.js"></script>
 </head>
 
 <body>
@@ -14,10 +14,14 @@
         <h1>Gaminas: let`s change!</h1>
       </div>
       <div id="righthead">
-        <? if ($uid === 0) { ?>
+        <? if ($GAMINAS['uid'] === 0) { ?>
+<!--
         <script src="//ulogin.ru/js/ulogin.js"></script>
-        <div id="uLogin" data-ulogin="display=buttons;fields=uid;providers=steam;hidden=;redirect_uri=;receiver=http%3A%2F%2Fgaminas.ice%2Fxd_custom.html;callback=login">
-          <img src="<?=$source?>/img/steam.png" data-uloginbutton="steam"/>
+        <div id="uLogin" data-ulogin="display=panel;fields=first_name,last_name;providers=steam;hidden=;redirect_uri=http%3A%2F%2Fgaminas.ice"></div>
+-->
+        <script src="//ulogin.ru/js/ulogin.js"></script>
+        <div id="uLogin" data-ulogin="display=panel;fields=uid;providers=steam;hidden=;redirect_uri=;receiver=http%3A%2F%2Fgaminas.ice%2Fxd_custom.htm;callback=login">
+          <img src="<?=$GAMINAS['source']?>/img/steam.png" data-uloginbutton="steam"/>
         </div>
         <? } else { ?>
         <a target="blank" href="<?=$profurl?>"><div id="loginholder"><div id="login"><?=$username?></div><img id="head_ava" src="<?=$avatar?>"/></div></a>

@@ -12,10 +12,10 @@ $(document).ready(function() {
 });
 
 function login(token){
-    $.getJSON("//ulogin.ru/token.php?host=" +
-        encodeURIComponent(location.toString()) + "&token=" + token + "&callback=?",
+    $.getJSON("//ulogin.ru/token.php?host=" + encodeURIComponent(location.toString()) + "&token=" + token + "&callback=?",
     function(data){
         data=$.parseJSON(data.toString());
+        console.log(data);
         if(!data.error){
             document.cookie = 'uid=' + data.uid;
             window.location.reload(); // Костыль

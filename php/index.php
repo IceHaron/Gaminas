@@ -1,16 +1,5 @@
 <?php
-if (isset($_POST['token'])) {
-$s = file_get_contents('http://ulogin.ru/token.php?token=' . $_POST['token'] . '&host=' . $_SERVER['HTTP_HOST']);
-$user = json_decode($s, true);
-//$user['network'] - соц. сеть, через которую авторизовался пользователь
-//$user['identity'] - уникальная строка определяющая конкретного пользователя соц. сети
-//$user['first_name'] - имя пользователя
-//$user['last_name'] - фамилия пользователя
-}
-// var_dump($_COOKIE);
-if (isset($_COOKIE['uid']) && $_COOKIE['uid'] !== '') $uid = $_COOKIE['uid'];
-else $uid = 0;
-
+$uid = $GAMINAS['uid'];
 if ($uid !== 0) {
   $str = '';
 
@@ -28,14 +17,17 @@ if ($uid !== 0) {
   $inv_str = file_get_contents('http://steamcommunity.com/profiles/' . $uid . '/inventory/json/753/1');
   // $inv_str = '{}';
   $str .= '}';
+
+  // echo '<pre>';
+  // echo $str;
+  // echo '</pre>';
+  $json = json_decode($str);
+  $username = $json->profile->response->players[0]->personaname;
+  $profurl = $json->profile->response->players[0]->profileurl;
+  $avatar = $json->profile->response->players[0]->avatar;
+  $gamearray = $json->lib->response->games;
+} else {
+  $nologin = 'You are not logged in!';
 }
 
-// echo '<pre>';
-// echo $str;
-// echo '</pre>';
-$json = json_decode($str);
-$username = $json->profile->response->players[0]->personaname;
-$profurl = $json->profile->response->players[0]->profileurl;
-$avatar = $json->profile->response->players[0]->avatar;
-$gamearray = $json->lib->response->games;
 ?>
