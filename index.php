@@ -1,9 +1,8 @@
 <?php
-
 class root {
   var $path;
   
-  function root() {
+  public function root() {
     $address = $_SERVER['HTTP_HOST'];
     $this->path = $address;
     $this->server = $_SERVER;
@@ -25,6 +24,10 @@ class root {
     }
   }
   
+  public function url_parse() {
+    var_dump(ltrim($_SERVER['REQUEST_URI'], '/'));
+    
+  }
 }
 
 $GAMINAS = array(); // Глобальная переменная, куда будет запихиваться весь нужный хлам
@@ -34,7 +37,7 @@ $page = new root();
 $page->include_php();
 $GAMINAS['source'] = 'http://' . $page->path . '/source';
 // var_dump($page->server);
-
+$page->url_parse();
 // require_once('php/index.php');
 INCLUDE('html/index.html');
 ?>

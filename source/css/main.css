@@ -57,12 +57,21 @@ body {
 #head_ava {
   float: right;
 }
-#library {
-  display: none;
+#topmenu {
+  width: 90%;
+  padding: 5px;
+  margin: 0 auto;
 }
-#inventory {
-  width: 100%;
-  min-height: 300px;
+.topmenunode {
+  width: 15%;
+  padding: 5px;
+  margin: 5px;
+  float: left;
+  background-color: #ccc;
+  text-decoration: none;
+}
+.topmenunode:hover {
+  background-color: red;
 }
 
 .main_caption {
