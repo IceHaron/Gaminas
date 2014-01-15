@@ -85,6 +85,15 @@ class root {
 *	
 */
 $GAMINAS = array(); 																														// Глобальная переменная, куда будет запихиваться весь нужный хлам
+$file = fopen('TODO.txt', 'r');																									// Разбираем TODO.txt
+$c = 0;
+while ($todostring = fgets($file)) {
+	$todoarr = explode('--', $todostring);
+	$GAMINAS['todo'][$c]['class'] = trim($todoarr[0]);
+	$GAMINAS['todo'][$c]['text'] = trim($todoarr[1]);
+	$GAMINAS['todo'][$c]['state'] = trim($todoarr[2]);
+	$c++;
+}
 session_start();
 $page = new root();
 $page->include_classes();

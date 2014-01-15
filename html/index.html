@@ -76,6 +76,37 @@
     </div>
 		
 <!-- / Тело -->
+
+<!-- ПОЛ -->
+
+		<div id="footer">
+			<table id="todo" cellpadding="3">
+				<thead>
+					<tr>
+						<td>Класс</td>
+						<td>Описание</td>
+						<td>Статус</td>
+					</tr>
+				</thead>
+				<tbody>
+					<?foreach ($GAMINAS['todo'] as $k => $todoarr) {?>
+						<tr class="todotr">
+							<td class="<?=$todoarr['class']?> left">
+								<?=$todoarr['class']?>
+							</td>
+							<td class="<?=$todoarr['class']?> right">													<!-- Тут класс берется из нулевого элемента для придания правильной окраски блока -->
+								<?=$todoarr['text']?>
+							</td>
+							<td class="<?=$todoarr['state']?>">
+								<?=$todoarr['state']?>
+							</td>
+						</tr>
+					<? } ?>
+				</tbody>
+			</table>
+		</div>
+		
+<!-- / Пол -->
 		
     <div class="clear"></div>
   </div>

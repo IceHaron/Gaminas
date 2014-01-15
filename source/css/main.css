@@ -84,6 +84,7 @@ a.nodeco {
 .topmenunode:hover {
   background-color: red;
 }
+
 .gamefield {
   height: 100px;
   width: 200px;
@@ -92,4 +93,33 @@ a.nodeco {
 }
 .gamename {
   font-size: 12px;
+}
+
+#todo {
+	width: 100%;
+}
+#todo tbody tr td {
+	opacity: 0.7;
+}
+#todo tbody tr td.left {
+	text-align: center;
+}
+#todo tbody tr td:hover {
+	opacity: 1;
+}
+.TODO {
+	background-color: #dbd;
+}
+.QUEST {
+	background-color: #aaf;
+}
+.UNDONE {
+	text-align: center;
+	background-color: red;
+	color: white;
+}
+.DONE {
+	text-align: center;
+	background-color: green;
+	color: white;
 }
