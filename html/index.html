@@ -9,36 +9,74 @@
 
 <body>
   <div id="main">
+	
+<!-- ШАПКА -->
+
     <div id="header">
-      <div id="titleholder">
-        <h1>Gaminas: let`s change!</h1>
-      </div>
+		
+			<a href="/" class="nodeco">
+				<div id="titleholder">
+					<h1>Gaminas: let`s change!</h1>
+				</div>
+			</a>
+			
+<!-- АВАТАРКА, ЛОГИНИЗАЦИЯ И ПРОЧЕЕ -->
       <div id="righthead">
-        <? if ($GAMINAS['uid'] === 0) { ?>
-<!--
+        <? if ($GAMINAS['uid'] === 0) { ?>																			<!-- Если мы не авторизованы -->
+<!-- Закомментил на случай если вдруг все перестанет работать
         <script src="//ulogin.ru/js/ulogin.js"></script>
         <div id="uLogin" data-ulogin="display=panel;fields=first_name,last_name;providers=steam;hidden=;redirect_uri=http%3A%2F%2Fgaminas.ice"></div>
 -->
+<!-- Логинизация от uLogin -->
         <script src="//ulogin.ru/js/ulogin.js"></script>
         <div id="uLogin" data-ulogin="display=panel;fields=uid;providers=steam;hidden=;redirect_uri=;receiver=http%3A%2F%2Fgaminas.ice%2Fxd_custom.htm;callback=login">
           <img src="<?=$GAMINAS['source']?>/img/steam.png" data-uloginbutton="steam"/>
         </div>
-        <? } else { ?>
-        <a target="blank" href="<?=$profurl?>"><div id="loginholder"><div id="login"><?=$username?></div><img id="head_ava" src="<?=$avatar?>"/></div></a>
+        <? } else { ?>																													<!-- Если мы уже залогинились -->
+        <a target="blank" href="<?=$GAMINAS['profurl']?>">
+					<div id="loginholder">
+						<div id="login"><?=$GAMINAS['username']?></div>
+						<img id="head_ava" src="<?=$GAMINAS['avatar']?>"/>
+					</div>
+				</a>
         <button id="logoff">Logoff</button>
         <? } ?>
       </div>
+<!-- / Аватарка, логинизация и прочее -->
+
     </div>
+		
+<!-- / Шапка -->
+		
+<!-- \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->
+<!-- /////////////////////////////////////////////////////////////////////// -->
+		
+<!-- ТЕЛО -->
+
     <div id="body">
-      <div id="topmenu">
+
+<!-- ГЛАВНАЯ МЕНЮШКА -->
+			<div id="topmenu">
           <a href="/library"><div class="topmenunode">Библиотека</div></a>
           <a href="/trade"><div class="topmenunode">Обмен</div></a>
           <a href="/news"><div class="topmenunode">Новости</div></a>
           <a href="/contact"><div class="topmenunode">Контакт</div></a>
           <a href="/wtf/four/level/addr"><div class="topmenunode" style="float:right;">WTF</div></a>
+					<div class="clear"></div>
       </div>
+<!-- / Главная менюшка -->
+
+			<div id="maincaption"><?=$GAMINAS['maincaption']?></div>									<!-- Заголовок страницы -->
+			
+			<div id="maincontent">
+				<?=$GAMINAS['maincontent']?>
+			</div>
+			
       <div class="clear"></div>
     </div>
+		
+<!-- / Тело -->
+		
     <div class="clear"></div>
   </div>
 </body>
