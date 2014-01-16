@@ -1,3 +1,13 @@
+/**
+*	
+*	Основной CSS, здесь описаны стили для основных элементов разметки и макета.
+*	Специализированные элементы, в том числе элементы внутреннего блока ищите в
+*	файлах CSS, имеющих то же название, что и файл класса/контроллера
+*	
+**/
+
+/* Общие элементы =========================================================== */
+
 h1 {
  color: white;
 }
@@ -17,18 +27,19 @@ a.nodeco {
   clear: both;
 }
 
+/* Основная разметка, макет ================================================= */
+
 #main {
   width: 90%;
   margin: auto;
   border: 1px solid black
 }
+
+/* Шапка */
+
 #header {
   width: 100%;
   height: 100px;
-}
-#body {
-  padding: 5px;
-  background-color: #fdd;
 }
 #titleholder {
   width: 50%;
@@ -54,24 +65,19 @@ a.nodeco {
   margin-right: 10px;
   float: left;
 }
-#logoff {
-  width: 90%;
-}
-#head_ava {
-  float: right;
+#logoff { width: 90%; }
+#head_ava { float: right; }
+
+/* Тело */
+
+#body {
+  padding: 5px;
+  background-color: #fdd;
 }
 #topmenu {
   width: 90%;
   padding: 5px;
   margin: 0 auto;
-}
-#maincaption {
-  height: 30px;
-  margin: 5px;
-  text-align: center;
-  font-size: 20px;
-  background-color: #dfd;
-  cursor: pointer;
 }
 .topmenunode {
   width: 15%;
@@ -82,30 +88,26 @@ a.nodeco {
   text-decoration: none;
 }
 .topmenunode:hover {
-  background-color: red;
+  background-color: grey;
+}
+#maincaption {
+  height: 30px;
+  margin: 5px;
+  text-align: center;
+  font-size: 20px;
+  background-color: #dfd;
+  cursor: pointer;
 }
 
-.gamefield {
-  height: 100px;
-  width: 200px;
-  float: left;
-  text-align: center;
-}
-.gamename {
-  font-size: 12px;
-}
+/* Где-то здесь должен быть пол */
+
+/* TODO табличка */
 
 #todo {
 	width: 100%;
 }
-#todo tbody tr td {
-	opacity: 0.7;
-}
 #todo tbody tr td.left {
 	text-align: center;
-}
-#todo tbody tr td:hover {
-	opacity: 1;
 }
 .TODO {
 	background-color: #dbd;
@@ -113,12 +115,14 @@ a.nodeco {
 .QUEST {
 	background-color: #aaf;
 }
-.UNDONE {
+.UNDONE { opacity: 0.7; }
+.DONE { opacity: 0.3 }
+.UNDONE-right {
 	text-align: center;
 	background-color: red;
 	color: white;
 }
-.DONE {
+.DONE-right {
 	text-align: center;
 	background-color: green;
 	color: white;

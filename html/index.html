@@ -3,6 +3,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
   <title>Gaminas</title>
   <link type="text/css" rel="stylesheet" href="<?=$GAMINAS['source']?>/css/main.css"></link>
+	<!-- Подгрузка стилей в зависимости от адреса -->
+  <link type="text/css" rel="stylesheet" href="<?=$GAMINAS['source']?>/css/<?=$GAMINAS['action']?>.css"></link>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
   <script src="<?=$GAMINAS['source']?>/js/main.js"></script>
 </head>
@@ -68,9 +70,11 @@
 
 			<div id="maincaption"><?=$GAMINAS['maincaption']?></div>									<!-- Заголовок страницы -->
 			
+<!-- ОСНОВНОЙ БЛОК -->
 			<div id="maincontent">
 				<?=$GAMINAS['maincontent']?>
 			</div>
+<!-- / Основной блок -->
 			
       <div class="clear"></div>
     </div>
@@ -91,13 +95,13 @@
 				<tbody>
 					<?foreach ($GAMINAS['todo'] as $k => $todoarr) {?>
 						<tr class="todotr">
-							<td class="<?=$todoarr['class']?> left">
+							<td class="<?=$todoarr['state'].' '.$todoarr['class']?> left">
 								<?=$todoarr['class']?>
 							</td>
-							<td class="<?=$todoarr['class']?> right">													<!-- Тут класс берется из нулевого элемента для придания правильной окраски блока -->
+							<td class="<?=$todoarr['state'].' '.$todoarr['class']?> center">	<!-- Тут класс берется из нулевого элемента для придания правильной окраски блока -->
 								<?=$todoarr['text']?>
 							</td>
-							<td class="<?=$todoarr['state']?>">
+							<td class="<?=$todoarr['state']?>-right">
 								<?=$todoarr['state']?>
 							</td>
 						</tr>

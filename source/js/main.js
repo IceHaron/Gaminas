@@ -24,6 +24,16 @@ $(document).ready(function() {
   $('#logoff').click(function() {
     window.location = '/logoff';
   });
+	
+	$('#todo tbody tr').hover(function() {
+		$(this).children('td').animate({'opacity': '1'}, 100);
+	},
+	function() {
+		if ($(this).children('td').eq(2).attr('class') == 'UNDONE-right')	$(this).children('td').animate({'opacity': '0.7'}, 100);
+		else $(this).children('td').animate({'opacity': '0.3'}, 100);
+	});
+	
+/* End of READY() */
 });
 
 

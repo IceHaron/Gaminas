@@ -60,11 +60,12 @@ class root {
 *	
 */  
   public function url_parse() {
+    global $GAMINAS;
 		global $auth;																																// Класс auth полюбому уже объявлен. лишний раз его объявлять не надо, просто обращаемся к глобалке
 		$path = explode('/', trim($_SERVER['REQUEST_URI'], '/'));										// Отрезаем крайние слеши у адреса и разбиваем его в массив
-		$action = $path[0];
+		$GAMINAS['action'] = $path[0];
 		
-		switch ($action) {																													// Бежим по известным методам, это, конечно, костыль и подлежит полной переработке.
+		switch ($GAMINAS['action']) {																													// Бежим по известным методам, это, конечно, костыль и подлежит полной переработке.
 			case 'logoff':																														// Выход из учетки
 				$auth->logoff();
 				break;

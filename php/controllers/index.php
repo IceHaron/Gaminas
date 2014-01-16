@@ -5,6 +5,8 @@
 *	Главный контроллер, надо будет перепилить в нормальном виде, но пока знаний маловато
 *	
 */
-$GAMINAS['maincaption'] = 'Главная';
-$GAMINAS['maincontent'] = '';
+if (!isset($GAMINAS['maincaption'])) {
+	$GAMINAS['maincaption'] = 'Главная';
+	$GAMINAS['maincontent'] = '';
+}
 ?>

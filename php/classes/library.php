@@ -28,7 +28,7 @@ class library {
         </div>
 			';
 		}
-// Определяем аголовок страницы и содержимое центрального блока.
+// Определяем заголовок страницы и содержимое центрального блока.
 		$GAMINAS['maincaption'] = 'Библиотека ваших игр';
 		$GAMINAS['maincontent'] = '<div id="libfilter">Дохера фильтр</div><div id="library">' . $gamestable . '<div class="clear"></div></div>';
 	}
