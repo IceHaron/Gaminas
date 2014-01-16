@@ -35,23 +35,32 @@ class root {
 */
   function include_classes($filter = '') {
     global $GAMINAS;
-		
+		$GAMINAS['backtrace'][] = 'include_classes from index.php here';
     if(gettype($filter) == 'string' && $filter != '') { 												// Если даем строкой только один нужный модуль
+			$GAMINAS['backtrace'][] = 'got string filter: ' . $filter;
       $files[0] = glob('php/classes/' . $filter . '.php');
     } else if (gettype($filter) == 'array') { 																	// Если в массиве перечисляем нужные модули
-      
+      $backtrace = 'got array filter: ';
+
 			foreach ($filter as $need) {
+				$backtrace .= $need . ', ';
         $files[] = glob('php/classes/' . $need . '.php');
       }
-    
+			
+		$GAMINAS['backtrace'][] = $backtrace;
+   
 		} else { 																																		// Если вообще не даем параметров, соответственно, нужны вообще все модули, пока что нужно в качестве костыля
+			$GAMINAS['backtrace'][] = 'got no filter';
       $files = glob('php/classes/*.php'); 
     }
 		
 		// Пробегаемся по составленному списку файлов и инклудим каждый.
+		$backtrace = 'found files: ';
     foreach($files as $file) {
+			$backtrace .= $file . ', ';
       require_once($file);
     }
+		$GAMINAS['backtrace'][] = $backtrace;
   }
 
 /**
@@ -65,7 +74,7 @@ class root {
 		$path = explode('/', trim($_SERVER['REQUEST_URI'], '/'));										// Отрезаем крайние слеши у адреса и разбиваем его в массив
 		$GAMINAS['action'] = $path[0];
 		
-		switch ($GAMINAS['action']) {																													// Бежим по известным методам, это, конечно, костыль и подлежит полной переработке.
+		switch ($GAMINAS['action']) {																								// Бежим по известным методам, это, конечно, костыль и подлежит полной переработке.
 			case 'logoff':																														// Выход из учетки
 				$auth->logoff();
 				break;
@@ -85,7 +94,11 @@ class root {
 *	Здесь мы объявляем глобальные переменные, стартуем сессию, объявляем необходимые классы
 *	
 */
-$GAMINAS = array(); 																														// Глобальная переменная, куда будет запихиваться весь нужный хлам
+$GAMINAS = array(		 																														// Глобальная переменная, куда будет запихиваться весь нужный хлам
+		'maincaption' => 'Default Caption'																					// Стандартный заголовок страницы
+	, 'maincontent' => 'NULL'																											// Стандартное содержимое центрального блока
+	, 'backtrace' => array()																											// Стандартный бэктрейс
+	);
 $file = fopen('TODO.txt', 'r');																									// Разбираем TODO.txt
 $c = 0;
 while ($todostring = fgets($file)) {

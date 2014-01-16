@@ -101,6 +101,17 @@ a.nodeco {
 
 /* Где-то здесь должен быть пол */
 
+/* Блок backtrace */
+
+#backtrace {
+	padding: 5px;
+	margin: 5px;
+	border: 2px dotted lightblue;
+}
+#backtrace label {
+	color: lightblue;
+}
+
 /* TODO табличка */
 
 #todo {
@@ -116,14 +127,16 @@ a.nodeco {
 	background-color: #aaf;
 }
 .UNDONE { opacity: 0.7; }
-.DONE { opacity: 0.3 }
+.DONE { opacity: 0.3; }
 .UNDONE-right {
 	text-align: center;
 	background-color: red;
 	color: white;
+	opacity: 0.7;
 }
 .DONE-right {
 	text-align: center;
 	background-color: green;
 	color: white;
+	opacity: 0.3;
 }

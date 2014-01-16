@@ -84,6 +84,13 @@
 <!-- ПОЛ -->
 
 		<div id="footer">
+			<div id="backtrace">
+				<label>Backtrace</label>
+				<? foreach($GAMINAS['backtrace'] as $message) { ?>
+					<p><?=$message?></p>
+				<? } ?>
+				<div class="clear"></div>
+			</div>
 			<table id="todo" cellpadding="3">
 				<thead>
 					<tr>
