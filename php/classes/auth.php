@@ -35,12 +35,12 @@ class auth {
 		if (isset($_SESSION['uid']) && $_SESSION['uid'] !== '' && $_SESSION['uid'] !== NULL) {
 			// Проверяем, может, в сессии лежит айдишник? это значит, что мы уже авторизованы
 			$GAMINAS['uid'] = $_SESSION['uid'];
-			echo '<br/>Logged in through session<br/>';
+			$GAMINAS['backtrace'][] = 'Logged in through session';
 		} else if (isset($_COOKIE['uid']) && $_COOKIE['uid'] !== '' && $_COOKIE['uid'] !== NULL) {
 			// Не в сессии, так в печеньках
 			$GAMINAS['uid'] = $_COOKIE['uid'];
 			$_SESSION['uid'] = $GAMINAS['uid'];
-			echo '<br/>Logged in through cookie<br/>';
+			$GAMINAS['backtrace'][] = 'Logged in through cookie';
 		} else $GAMINAS['uid'] = 0;																									// Ну если даже в печеньках нет нашего юида, то все-таки мы не логинились
 		
 		$uid = $GAMINAS['uid'] ? $GAMINAS['uid'] : 0;																// Делалось для сокращения кода, после модификаций можно будет это убрать и лишний раз не переобъявлять переменную

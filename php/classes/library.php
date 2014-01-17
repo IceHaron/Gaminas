@@ -3,6 +3,8 @@
 /**
 *	
 *	Библиотека игр, думаю, тут можно много няшек наворотить, типа подгрузки информации об играх и прочего...
+*	@author: Пищулин Сергей
+*	@version: 0.0.1
 *	
 */
 class library {
@@ -30,7 +32,8 @@ class library {
 		}
 // Определяем заголовок страницы и содержимое центрального блока.
 		$GAMINAS['maincaption'] = 'Библиотека ваших игр';
-		$GAMINAS['maincontent'] = '<div id="libfilter">Дохера фильтр</div><div id="library">' . $gamestable . '<div class="clear"></div></div>';
+		$GAMINAS['mainsupport'] = '<input id="namesearch" type="text" placeholder="Название"/><div id="filtercomment"></div>';
+		$GAMINAS['maincontent'] = $gamestable;
 	}
 }
 

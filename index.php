@@ -83,7 +83,7 @@ class root {
 				break;
 		}
 		
-    var_dump($path);
+    // var_dump($path);
     
   }
 	
@@ -97,6 +97,7 @@ class root {
 $GAMINAS = array(		 																														// Глобальная переменная, куда будет запихиваться весь нужный хлам
 		'maincaption' => 'Default Caption'																					// Стандартный заголовок страницы
 	, 'maincontent' => 'NULL'																											// Стандартное содержимое центрального блока
+	, 'mainsupport' => 'NULL'																											// Вспомогательный блок
 	, 'backtrace' => array()																											// Стандартный бэктрейс
 	);
 $file = fopen('TODO.txt', 'r');																									// Разбираем TODO.txt
@@ -109,9 +110,11 @@ while ($todostring = fgets($file)) {
 	$c++;
 }
 session_start();
+include_once('php/firephp/fb.php');																							// Подключаем FirePHP
 $page = new root();
-$page->include_classes();
-$auth = new auth();
+$page->include_classes();																												// Подключаем классы
+$db = new db();																																	// Подключаемся к базе данных
+$auth = new auth();																															// Авторизуемся
 $GAMINAS['source'] = 'http://' . $page->path . '/source';												// Папка, откуда берется весь хлам
 // var_dump($page->server);
 $page->url_parse();																															// Разбираем адрес

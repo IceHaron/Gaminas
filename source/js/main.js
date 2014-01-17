@@ -11,8 +11,27 @@ $(document).ready(function() {
 *	Клик на заголовке скрывает/раскрывает фильтр и что-то еще делает, пока не придумал
 *	
 */
+$('#namesearch').keyup(function(key) {
+	if (key.keyCode != '16' && $(this).val().length > 0) {												// Не буду отслеживать Шифт
+		what = $(this).val().toLowerCase();
+		filtered = 0;
+		agreed = 0;
+		$('.gamename').each(function() {
+			where = $(this).text().toLowerCase();
+			if (where.search(what) == -1) { $(this).parent().hide(); filtered++; }		// Все, что отфильтровывается, скрываем
+			else { $(this).parent().show();	agreed++; }																// А все, что удовлетворяет, показываем.
+		});
+		$('#filtercomment').text('Показано ' + agreed + ', отфильтровано ' + filtered);
+	} else if ($(this).val().length == 0) $('#filtercomment').text('');
+});
+
+/**
+*	
+*	Клик на заголовке скрывает/раскрывает фильтр и что-то еще делает, пока не придумал
+*	
+*/
   $('#maincaption').click(function() {
-    $('#libfilter').toggle();																										// Фильтр пока существует только в библиотеке, так еще и нереализованный, надо допилить
+    $('#mainsupport').toggle();																									// Фильтр пока существует только в библиотеке, так еще и нереализованный, надо допилить
   });
   
 /**

@@ -98,6 +98,14 @@ a.nodeco {
   background-color: #dfd;
   cursor: pointer;
 }
+#mainsupport {
+	min-height: 20px;
+	padding: 5px;
+	border: 1px solid red;
+}
+#maincontent {
+	border: 2px dotted red;
+}
 
 /* Где-то здесь должен быть пол */
 
@@ -110,6 +118,10 @@ a.nodeco {
 }
 #backtrace label {
 	color: lightblue;
+}
+#backtrace p {
+	margin: 5px;
+	font-size: 10px;
 }
 
 /* TODO табличка */
