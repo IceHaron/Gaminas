@@ -8,14 +8,18 @@
 
 class db {
 
-	var $con;																																			// Ссылка на подключение
+	public static $con;																																			// Ссылка на подключение
 
+	public static function init() {
+		return new self();
+	}
+	
 /**
 *	
 *	Класс для работы с базами данных
 *	
 **/
-	public function db() {
+	private function db() {
 	
 		global $GAMINAS;
 		
@@ -31,7 +35,7 @@ class db {
 		if (!$link) {
 			printf("<h2>Невозможно подключиться к базе данных.</h2> Код ошибки: %s\n", mysqli_connect_error());
 			exit;
-		} else $this->con = $link;
+		} else self::$con = $link;
 		
 		if (!mysqli_set_charset($link, "utf8")) {
 			$GAMINAS['backtrace'][] = "Error loading character set utf8: " . mysqli_error($link);
@@ -40,15 +44,16 @@ class db {
 		}
 	}
 	
-	public function query($query) {
-		$query_result = mysqli_query($this->con, $query);
+	public static function query($query) {
+		$query_result = mysqli_query(self::$con, $query);
 		fb(gettype($query_result));
 		if (gettype($query_result) !== 'boolean') $res = mysqli_fetch_all($query_result);
-		else $res = ($query_result === FALSE) ? 'FALSE: ' . mysqli_error($this->con) : $query_result;
+		else $res = ($query_result === FALSE) ? 'FALSE: ' . mysqli_error(self::$con) : $query_result;
 		fb($res);
-		if (mysqli_error($this->con) != '') return mysqli_error($this->con);
+		if (mysqli_error(self::$con) != '') return mysqli_error(self::$con);
 		return $res;
 	}
+	
 }
 
 ?>

@@ -35,16 +35,17 @@ class root {
 */
   function include_classes($filter = '') {
     global $GAMINAS;
+		$files = array();
 		$GAMINAS['backtrace'][] = 'include_classes from index.php here';
     if(gettype($filter) == 'string' && $filter != '') { 												// Если даем строкой только один нужный модуль
 			$GAMINAS['backtrace'][] = 'got string filter: ' . $filter;
-      $files[0] = glob('php/classes/' . $filter . '.php');
+      $files = glob('php/classes/' . $filter . '.php');
     } else if (gettype($filter) == 'array') { 																	// Если в массиве перечисляем нужные модули
       $backtrace = 'got array filter: ';
 
 			foreach ($filter as $need) {
 				$backtrace .= $need . ', ';
-        $files[] = glob('php/classes/' . $need . '.php');
+        $files = array_merge($files, glob('php/classes/' . $need . '.php'));
       }
 			
 		$GAMINAS['backtrace'][] = $backtrace;
@@ -53,7 +54,6 @@ class root {
 			$GAMINAS['backtrace'][] = 'got no filter';
       $files = glob('php/classes/*.php'); 
     }
-		
 		// Пробегаемся по составленному списку файлов и инклудим каждый.
 		$backtrace = 'found files: ';
     foreach($files as $file) {
@@ -72,18 +72,10 @@ class root {
     global $GAMINAS;
 		global $auth;																																// Класс auth полюбому уже объявлен. лишний раз его объявлять не надо, просто обращаемся к глобалке
 		$path = explode('/', trim($_SERVER['REQUEST_URI'], '/'));										// Отрезаем крайние слеши у адреса и разбиваем его в массив
-		$GAMINAS['action'] = $path[0];
+		$GAMINAS['controller'] = @$path[0] ? $path[0] : '';													// Первый уровень всегда определяет контроллер
+		$GAMINAS['action'] = @$path[1] ? $path[1] : '';															// Второй уровень всегда определяет метод
 		
-		switch ($GAMINAS['action']) {																								// Бежим по известным методам, это, конечно, костыль и подлежит полной переработке.
-			case 'logoff':																														// Выход из учетки
-				$auth->logoff();
-				break;
-			case 'library':																														// Библиотека игр
-				$library = new library();
-				break;
-		}
-		
-    // var_dump($path);
+    var_dump($path);
     
   }
 	
@@ -112,21 +104,13 @@ while ($todostring = fgets($file)) {
 session_start();
 include_once('php/firephp/fb.php');																							// Подключаем FirePHP
 $page = new root();
-$page->include_classes();																												// Подключаем классы
-$db = new db();																																	// Подключаемся к базе данных
-$auth = new auth();																															// Авторизуемся
-$GAMINAS['source'] = 'http://' . $page->path . '/source';												// Папка, откуда берется весь хлам
-// var_dump($page->server);
 $page->url_parse();																															// Разбираем адрес
+$page->include_classes();																												// Подключаем все классы
+db::init();
+auth::init();
+$GAMINAS['source'] = 'http://' . $page->path . '/source';												// Папка, откуда берется весь хлам
 require_once('php/controllers/index.php');																			// Подключаем контроллер, хорошо бы сделать подгрузку контроллера в зависимости от адреса или что-нибудь типа того
 INCLUDE('html/index.html');																											// Ну и подгружаем макет, конечно же
-
-
-
-/*
-Нужно сделать фиговину, чтобы в текстовом файле писать всякие прикрутовины типа TODO или заметок о багах
-и чтобы из этого файла скрипт подгружал инфу и выводил мне на каждой странице где-нибудь в футере.
-*/
 
 
 ?>

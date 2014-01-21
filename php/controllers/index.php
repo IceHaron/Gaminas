@@ -14,6 +14,6 @@ if ($GAMINAS['maincontent'] === 'NULL') {																				// Переменн
 }
 
 if ($page->server['REQUEST_URI'] == '/') {																			// Условие нужно для того, чтобы разграничивать то, что происходит в корне и все остальное, ибо здешний код выполняется в любом случае.
-	$db->query('INSERT INTO `users` (`login`, `pw`) VALUES ("query_test_0", PASSWORD("ololo"))');
+	db::query('INSERT INTO `users` (`login`, `pw`) VALUES ("query_test_0", PASSWORD("ololo"))');
 }
 ?>

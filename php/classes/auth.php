@@ -9,13 +9,16 @@
 */
 class auth {
 
+	public static function init() {
+		return new self();
+	}
 
 /**
 *	
 *	Конструктор
 *	
 */
-	public function auth() {
+	private function auth() {
 		global $GAMINAS;
 		
 // Логинизация от uLogin, оставлю пока здесь, мало ли пригодится

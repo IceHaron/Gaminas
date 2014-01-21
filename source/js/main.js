@@ -41,7 +41,7 @@ $('#namesearch').keyup(function(key) {
 *	
 */
   $('#logoff').click(function() {
-    window.location = '/logoff';
+    window.location = '/auth/logoff';
   });
 	
 	$('#todo tbody tr').hover(function() {
