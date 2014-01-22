@@ -103,6 +103,7 @@ while ($todostring = fgets($file)) {
 }
 session_start();
 include_once('php/firephp/fb.php');																							// Подключаем FirePHP
+fb($_SERVER);
 $page = new root();
 $page->url_parse();																															// Разбираем адрес
 $page->include_classes();																												// Подключаем все классы
