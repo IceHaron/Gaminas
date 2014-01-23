@@ -27,7 +27,7 @@ class root {
     self::$path = $address;																											// Отдаем в классовое свойство адрес...
     self::$server = $_SERVER;																										// ...и переменную $_SERVER
 		self::url_parse();																													// Разбираем адрес
-		self::include_classes();																										// Подключаем все классы
+		self::include_classes('ololo_2_trololo');																										// Подключаем все классы
   }
 
 /**
@@ -39,10 +39,22 @@ class root {
 *	@param array : Фильтр задан массивом, выбираем файлы в соответствии с элементами этого массива
 *	
 */
-  private static function include_classes($filter = '') {
+  public static function include_classes($filter = '') {
     global $GAMINAS;
 		$files = array();
-		$GAMINAS['backtrace'][] = 'include_classes from index.php here';
+		
+		// Проверка входных данных
+		if (gettype($filter) == 'string' && $filter != '') {
+			$ver[$filter] = preg_match('/[\W]/', $filter);														// При такой проверке допускаются буквы, цифры и нижний слэш, например, ololo_2trololo
+		} else if (gettype($filter) == 'array') {
+		
+		} else {
+		
+		}
+		var_dump($ver);
+		die;
+		
+		// Проверка пройдена, начинаем разбор
     if(gettype($filter) == 'string' && $filter != '') { 												// Если даем строкой только один нужный модуль
 			$GAMINAS['backtrace'][] = 'got string filter: ' . $filter;
       $files = glob('php/classes/' . $filter . '.php');
@@ -60,12 +72,16 @@ class root {
 			$GAMINAS['backtrace'][] = 'got no filter';
       $files = glob('php/classes/*.php'); 
     }
-		// Пробегаемся по составленному списку файлов и инклудим каждый.
-		$backtrace = 'found files: ';
-    foreach($files as $file) {
-			$backtrace .= $file . ', ';
-      require_once($file);
-    }
+		if ($files) {
+			// Пробегаемся по составленному списку файлов и инклудим каждый.
+			$backtrace = 'found files: ';
+			foreach($files as $file) {
+				$backtrace .= $file . ', ';
+				require_once($file);
+			}
+		} else {
+			$backtrace = 'We found no classes with that filter';
+		}
 		$GAMINAS['backtrace'][] = $backtrace;
   }
 
@@ -79,19 +95,40 @@ class root {
 		global $auth;																																// Класс auth полюбому уже объявлен. лишний раз его объявлять не надо, просто обращаемся к глобалке
 		$path = explode('/', trim($_SERVER['REQUEST_URI'], '/'));										// Отрезаем крайние слеши у адреса и разбиваем его в массив
 		$GAMINAS['folder'] = $path[0];																							// Первый уровень всегда определяет группу контроллеров
+		
 		if ($path[0] != '')
-			if (glob('php/controllers/' . $path[0] . '/' . @$path[1] . '.php')) {
-				$GAMINAS['controller'] = $path[1];
-				$GAMINAS['params'] = array_slice($path, 2);
-			} else if (glob('php/controllers/' . $path[0] . '/index.php')) {
+			$count = count($path);
+			
+			if ($count == 1) {
 				$GAMINAS['controller'] = 'index';
-				$GAMINAS['params'] = array_slice($path, 1);
+				$GAMINAS['action'] = 'init';
+				$GAMINAS['params'] = array();
+
+			} else if ($count == 2) {
+				$GAMINAS['controller'] = 'index';
+				$GAMINAS['action'] = $path[1];
+				$GAMINAS['params'] = array();
+				
+			} else if ($count == 3) {
+				$GAMINAS['controller'] = $path[1];
+				$GAMINAS['action'] = $path[2];
+				$GAMINAS['params'] = array();
+				
+			} else if ($count >= 4) {
+				$GAMINAS['folder'] = $path[0];
+				$GAMINAS['controller'] = $path[1];
+				$GAMINAS['action'] = $path[2];
+				$GAMINAS['params'] = array_slice($path, 3);
+			
 			} else {
 				header("HTTP/1.0 404 Not Found");
 				echo file_get_contents('error/404.php');
 				die;
-				// echo '<meta http-equiv="refresh" content="0; url=http://' . $_SERVER['HTTP_HOST'] . '/error/404.php">';
 			}
+			
+			$controller = $GAMINAS['folder'] . '_' . $GAMINAS['controller'];
+			include_once('php/controllers/' . $GAMINAS['folder'] . '/' . $GAMINAS['controller'] . '.php');
+			$controller::$GAMINAS['action']('Amarr', 1034, '2014-01-23');
 		
     fb($path);
     
