@@ -4,7 +4,9 @@
   <title>Gaminas</title>
   <link type="text/css" rel="stylesheet" href="<?=$GAMINAS['source']?>/css/main.css"></link>
 	<!-- Подгрузка стилей в зависимости от адреса -->
-  <link type="text/css" rel="stylesheet" href="<?=$GAMINAS['source']?>/css/<?=$GAMINAS['controller']?>.css"></link>
+	<? if (@$GAMINAS['folder'] !== '') {?>
+  <link type="text/css" rel="stylesheet" href="<?=$GAMINAS['source']?>/css/<?=$GAMINAS['folder']?>.css"></link>
+	<? } ?>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
   <script src="<?=$GAMINAS['source']?>/js/main.js"></script>
 </head>

@@ -9,19 +9,25 @@
 */
 class root {
 
-  var $path; 																																		// Адрес, куда мы обращаемся, берется из $_SERVER['HTTP_HOST']
-  var $server; 																																	// Переменная $_SERVER, добавил сюда просто для тренировки.
+  public static $path; 																																		// Адрес, куда мы обращаемся, берется из $_SERVER['HTTP_HOST']
+  public static $server; 																																	// Переменная $_SERVER, добавил сюда просто для тренировки.
+
+	public static function init() {
+		return new self();
+	}
 	
 /**
 *
 *	Конструктор
 *
 */
-  public function root() {
+  private function root() {
 		header("HTTP/1.0 200 OK");																									// Вывешивается хэдер, иначе любая страница кроме / выдает 404 в хэдере
     $address = $_SERVER['HTTP_HOST'];
-    $this->path = $address;																											// Отдаем в классовое свойство адрес...
-    $this->server = $_SERVER;																										// ...и переменную $_SERVER
+    self::$path = $address;																											// Отдаем в классовое свойство адрес...
+    self::$server = $_SERVER;																										// ...и переменную $_SERVER
+		self::url_parse();																													// Разбираем адрес
+		self::include_classes();																										// Подключаем все классы
   }
 
 /**
@@ -33,7 +39,7 @@ class root {
 *	@param array : Фильтр задан массивом, выбираем файлы в соответствии с элементами этого массива
 *	
 */
-  function include_classes($filter = '') {
+  private static function include_classes($filter = '') {
     global $GAMINAS;
 		$files = array();
 		$GAMINAS['backtrace'][] = 'include_classes from index.php here';
@@ -48,7 +54,7 @@ class root {
         $files = array_merge($files, glob('php/classes/' . $need . '.php'));
       }
 			
-		$GAMINAS['backtrace'][] = $backtrace;
+			$GAMINAS['backtrace'][] = $backtrace;
    
 		} else { 																																		// Если вообще не даем параметров, соответственно, нужны вообще все модули, пока что нужно в качестве костыля
 			$GAMINAS['backtrace'][] = 'got no filter';
@@ -68,14 +74,26 @@ class root {
 *	Метод разбора адреса
 *	
 */  
-  public function url_parse() {
+  private static function url_parse() {
     global $GAMINAS;
 		global $auth;																																// Класс auth полюбому уже объявлен. лишний раз его объявлять не надо, просто обращаемся к глобалке
 		$path = explode('/', trim($_SERVER['REQUEST_URI'], '/'));										// Отрезаем крайние слеши у адреса и разбиваем его в массив
-		$GAMINAS['controller'] = @$path[0] ? $path[0] : '';													// Первый уровень всегда определяет контроллер
-		$GAMINAS['action'] = @$path[1] ? $path[1] : '';															// Второй уровень всегда определяет метод
+		$GAMINAS['folder'] = $path[0];																							// Первый уровень всегда определяет группу контроллеров
+		if ($path[0] != '')
+			if (glob('php/controllers/' . $path[0] . '/' . @$path[1] . '.php')) {
+				$GAMINAS['controller'] = $path[1];
+				$GAMINAS['params'] = array_slice($path, 2);
+			} else if (glob('php/controllers/' . $path[0] . '/index.php')) {
+				$GAMINAS['controller'] = 'index';
+				$GAMINAS['params'] = array_slice($path, 1);
+			} else {
+				header("HTTP/1.0 404 Not Found");
+				echo file_get_contents('error/404.php');
+				die;
+				// echo '<meta http-equiv="refresh" content="0; url=http://' . $_SERVER['HTTP_HOST'] . '/error/404.php">';
+			}
 		
-    var_dump($path);
+    fb($path);
     
   }
 	
@@ -83,15 +101,21 @@ class root {
 
 /**
 *	
-*	Здесь мы объявляем глобальные переменные, стартуем сессию, объявляем необходимые классы
+*	Самое начало работы сайта
 *	
 */
+
+// Объявляем глобалку
+
 $GAMINAS = array(		 																														// Глобальная переменная, куда будет запихиваться весь нужный хлам
 		'maincaption' => 'Default Caption'																					// Стандартный заголовок страницы
 	, 'maincontent' => 'NULL'																											// Стандартное содержимое центрального блока
 	, 'mainsupport' => 'NULL'																											// Вспомогательный блок
 	, 'backtrace' => array()																											// Стандартный бэктрейс
 	);
+	
+// Делаем блок TODO, надо бы это запихнуть в какой-нибудь отдельный файл
+
 $file = fopen('TODO.txt', 'r');																									// Разбираем TODO.txt
 $c = 0;
 while ($todostring = fgets($file)) {
@@ -101,17 +125,20 @@ while ($todostring = fgets($file)) {
 	$GAMINAS['todo'][$c]['state'] = trim($todoarr[2]);
 	$c++;
 }
-session_start();
-include_once('php/firephp/fb.php');																							// Подключаем FirePHP
-fb($_SERVER);
-$page = new root();
-$page->url_parse();																															// Разбираем адрес
-$page->include_classes();																												// Подключаем все классы
-db::init();
-auth::init();
-$GAMINAS['source'] = 'http://' . $page->path . '/source';												// Папка, откуда берется весь хлам
-require_once('php/controllers/index.php');																			// Подключаем контроллер, хорошо бы сделать подгрузку контроллера в зависимости от адреса или что-нибудь типа того
-INCLUDE('html/index.html');																											// Ну и подгружаем макет, конечно же
 
+session_start();																																// Стартуем сессию
+include_once('php/firephp/fb.php');																							// Подключаем FirePHP
+// fb($_SERVER);																																		// Сразу пишем в консоль $_SERVER
+root::init();																																		//
+db::init();																																			// Инициализируем все коренные классы
+auth::init();																																		//
+
+$GAMINAS['source'] = 'http://' . root::$path . '/source';												// Папка, откуда берется весь хлам
+
+require_once('php/controllers/index.php');																			// Подключаем контроллер, хорошо бы сделать подгрузку контроллера в зависимости от адреса или что-нибудь типа того
+
+fb($GAMINAS);																																		// Напоследок смотрим дефолтную конфигурацию
+
+INCLUDE('html/index.html');																											// Ну и подгружаем макет, конечно же
 
 ?>
