@@ -27,7 +27,8 @@ class root {
     self::$path = $address;																											// Отдаем в классовое свойство адрес...
     self::$server = $_SERVER;																										// ...и переменную $_SERVER
 		self::url_parse();																													// Разбираем адрес
-		self::include_classes('ololo_2_trololo');																										// Подключаем все классы
+		// self::include_classes('ololo_2_trololo');																										// Подключаем все классы
+		self::include_classes();
   }
 
 /**
@@ -43,7 +44,7 @@ class root {
     global $GAMINAS;
 		$files = array();
 		
-		// Проверка входных данных
+/* 		// Проверка входных данных
 		if (gettype($filter) == 'string' && $filter != '') {
 			$ver[$filter] = preg_match('/[\W]/', $filter);														// При такой проверке допускаются буквы, цифры и нижний слэш, например, ololo_2trololo
 		} else if (gettype($filter) == 'array') {
@@ -52,7 +53,7 @@ class root {
 		
 		}
 		var_dump($ver);
-		die;
+		die; */
 		
 		// Проверка пройдена, начинаем разбор
     if(gettype($filter) == 'string' && $filter != '') { 												// Если даем строкой только один нужный модуль
@@ -96,7 +97,7 @@ class root {
 		$path = explode('/', trim($_SERVER['REQUEST_URI'], '/'));										// Отрезаем крайние слеши у адреса и разбиваем его в массив
 		$GAMINAS['folder'] = $path[0];																							// Первый уровень всегда определяет группу контроллеров
 		
-		if ($path[0] != '')
+		if ($path[0] != '') {
 			$count = count($path);
 			
 			if ($count == 1) {
@@ -125,12 +126,9 @@ class root {
 				echo file_get_contents('error/404.php');
 				die;
 			}
+		}
 			
-			$controller = $GAMINAS['folder'] . '_' . $GAMINAS['controller'];
-			include_once('php/controllers/' . $GAMINAS['folder'] . '/' . $GAMINAS['controller'] . '.php');
-			$controller::$GAMINAS['action']('Amarr', 1034, '2014-01-23');
-		
-    fb($path);
+    fb($path, 'PATH');
     
   }
 	
@@ -176,6 +174,11 @@ require_once('php/controllers/index.php');																			// Подключа
 
 fb($GAMINAS);																																		// Напоследок смотрим дефолтную конфигурацию
 
-INCLUDE('html/index.html');																											// Ну и подгружаем макет, конечно же
+INCLUDE_ONCE('html/index.html');																								// Ну и подгружаем макет, конечно же
 
+$controller = $GAMINAS['folder'] . '_' . $GAMINAS['controller'];
+include_once('php/controllers/' . $GAMINAS['folder'] . '/' . $GAMINAS['controller'] . '.php');
+INCLUDE_ONCE('html/index.html');
+include_once('html/views/' . $GAMINAS['folder'] . '/' . $GAMINAS['controller'] . '.html');
+$controller::$GAMINAS['action']('Amarr', 1034, '2014-01-23');
 ?>
