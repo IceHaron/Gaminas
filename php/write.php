@@ -9,17 +9,20 @@ $arr = json_decode(json_encode($xml), TRUE);
 foreach($arr['result']['rowset']['row'] as $system) {
 	if ($system['@attributes']['solarSystemID'] == 30002187) $amarr = $system['@attributes']['shipJumps'];
 }
-// echo '<pre>';
+$stars = json_decode(file_get_contents($GAMINAS['rootfolder'] . '/source/js/SolarSystem.js'), TRUE);
+$regions = json_decode(file_get_contents($GAMINAS['rootfolder'] . '/source/js/Region.js'), TRUE);
+echo '<pre>';
+// var_dump($stars);
 // var_dump($xml->result->rowset->row);
 // $arr['currentTime'] - current time ETC
 // $arr['result']['dataTime'] - time of query ETC
-// echo '</pre>';
+echo '</pre>';
 
-$written = json_decode(file_get_contents((isset($_SERVER['OLDPWD']) ? $_SERVER['OLDPWD'] : $_SERVER['DOCUMENT_ROOT']) . '/source/txt/amarr.txt'), TRUE);
+$written = json_decode(file_get_contents($GAMINAS['rootfolder'] . '/source/txt/amarr.txt'), TRUE);
 $written[ $arr['cachedUntil'] ] = $amarr;
 $write = json_encode($written);
 var_dump($write);
-$file = fopen((isset($_SERVER['OLDPWD']) ? $_SERVER['OLDPWD'] : $_SERVER['DOCUMENT_ROOT']) . '/source/txt/amarr.txt', 'w+b');
+$file = fopen($GAMINAS['rootfolder'] . '/source/txt/amarr.txt', 'w+b');
 fwrite($file, $write);
 fclose($file);
 ?>

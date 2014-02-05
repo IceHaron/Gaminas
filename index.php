@@ -156,6 +156,7 @@ $GAMINAS = array(		 																														// Глобальная пер
 	, 'maincontent' => 'NULL'																											// Стандартное содержимое центрального блока
 	, 'mainsupport' => 'NULL'																											// Вспомогательный блок
 	, 'backtrace' => array()																											// Стандартный бэктрейс
+	, 'rootfolder' => isset($_SERVER['HOME']) ? $_SERVER['HOME'].'/gaminas' : $_SERVER['DOCUMENT_ROOT']
 	);
 	
 /////////////////////////////// Делаем блок TODO, надо бы это запихнуть в какой-нибудь отдельный файл
