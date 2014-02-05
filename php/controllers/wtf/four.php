@@ -18,7 +18,11 @@ class wtf_four {
 	}
 	
 	public static function level($par) {
-		$GAMINAS['backtrace'][] = $par;
+		global $GAMINAS;
+		foreach ($par as $thispar) {
+		var_dump($thispar);
+			$GAMINAS['backtrace'][] = $thispar;
+		}
 	}
 
 }

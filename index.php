@@ -96,47 +96,49 @@ class root {
 		$GAMINAS['folder'] = $path[0];																							// Первый уровень всегда определяет группу контроллеров
 		$a = $path;
 		
-		if (strpos(array_pop($a), '.') === FALSE) {
+		if (strpos(array_pop($a), '.') === FALSE) {																	// Проверяем наличие точки в последнем элементе (признак адреса типа /wtf/tell.php, не нужно нам такой радости.)
 		
 			if ($path[0] != '') {
-				$count = count($path);
+				$count = count($path);																									// Считаем количество уровней в адресе
 				
-				if ($count == 1) {
+				if ($count == 1) {																											// Один уровень: <host>/library
 					$GAMINAS['controller'] = 'index';
 					$GAMINAS['action'] = 'init';
 					$GAMINAS['params'] = array();
 
-				} else if ($count == 2) {
+				} else if ($count == 2) {																								// Два уровня: <host>/auth/login
 					$GAMINAS['controller'] = 'index';
 					$GAMINAS['action'] = $path[1];
 					$GAMINAS['params'] = array();
 					
-				} else if ($count == 3) {
+				} else if ($count == 3) {																								// Три уровня: <host>/wtf/three/level
 					$GAMINAS['controller'] = $path[1];
 					$GAMINAS['action'] = $path[2];
 					$GAMINAS['params'] = array();
 					
-				} else if ($count >= 4) {
+				} else if ($count >= 4) {																								// Четыре и более уровня: <host>/wtf/four/level/addr...
 					$GAMINAS['folder'] = $path[0];
 					$GAMINAS['controller'] = $path[1];
 					$GAMINAS['action'] = $path[2];
 					$GAMINAS['params'] = array_slice($path, 3);
 				
-				} else {
+				} else {																																// Ну и это на всякий случай
 					header("HTTP/1.0 404 Not Found");
 					echo file_get_contents('error/404.php');
 					die;
 				}
 			}
 				
-			fb($path, 'PATH');
-			$GAMINAS['isfile'] = FALSE;
-			self::include_classes(array('auth', 'db'));
-		
+			// fb($path, 'PATH');
+			$GAMINAS['isfile'] = FALSE;																								// Ставим триггер в положение FALSE чтобы позже определить, пытаемся мы обратиться к файлу напрямую или ввели нормальный путь
+			self::include_classes(array('auth', 'db'));																// Подключаем обязательные классы
+			db::init();	auth::init();																									// Инициализируем обязательные классы
+
+/////////////////////// Может, имеет смысл инициализировать классы сразу после подключения? Раз уж у меня лишнего пока ничего не подключается вроде
+			
 		} else {
-			$GAMINAS['isfile'] = TRUE;
+			$GAMINAS['isfile'] = TRUE;																								// Если же мы пытаемся обратиться к файлу напрямую, ставим триггер в положение TRUE
 		}
-		// self::include_classes('ololo_2_trololo');																										// Подключаем все классы
   }
 	
 }
@@ -156,7 +158,7 @@ $GAMINAS = array(		 																														// Глобальная пер
 	, 'backtrace' => array()																											// Стандартный бэктрейс
 	);
 	
-// Делаем блок TODO, надо бы это запихнуть в какой-нибудь отдельный файл
+/////////////////////////////// Делаем блок TODO, надо бы это запихнуть в какой-нибудь отдельный файл
 
 $file = fopen('source/txt/TODO.txt', 'r');																									// Разбираем TODO.txt
 $c = 0;
@@ -170,27 +172,26 @@ while ($todostring = fgets($file)) {
 
 session_start();																																// Стартуем сессию
 INCLUDE_ONCE('php/firephp/fb.php');																							// Подключаем FirePHP
-// fb($_SERVER);																																		// Сразу пишем в консоль $_SERVER
-root::init();																																		//
+// fb($_SERVER);
+root::init();																																		// Инициализируем коренной класс
 
-if (!$GAMINAS['isfile']) {
-	db::init();																																			// Инициализируем все коренные классы
-	auth::init();																																		//
+if (!$GAMINAS['isfile']) {																											// Если обращаемся не непосредственно к файлу
 
-	$GAMINAS['source'] = 'http://' . root::$path . '/source';												// Папка, откуда берется весь хлам
+	$GAMINAS['source'] = 'http://' . root::$path . '/source';											// Папка, откуда берется весь хлам
+	require_once('php/controllers/index.php');																		// Подключаем контроллер, хорошо бы сделать подгрузку контроллера в зависимости от адреса или что-нибудь типа того
+	fb($GAMINAS, 'GAMINAS');
+	INCLUDE_ONCE('html/index.html');																							// Ну и подгружаем макет, конечно же
 
-	require_once('php/controllers/index.php');																			// Подключаем контроллер, хорошо бы сделать подгрузку контроллера в зависимости от адреса или что-нибудь типа того
-
-	fb($GAMINAS);																																		// Напоследок смотрим дефолтную конфигурацию
-
-	INCLUDE_ONCE('html/index.html');																								// Ну и подгружаем макет, конечно же
-
-	$controller = $GAMINAS['folder'] . '_' . $GAMINAS['controller'];
-	INCLUDE_ONCE('php/controllers/' . $GAMINAS['folder'] . '/' . $GAMINAS['controller'] . '.php');
-	INCLUDE_ONCE('html/index.html');
-	INCLUDE_ONCE('html/views/' . $GAMINAS['folder'] . '/' . $GAMINAS['controller'] . '.html');
-	$controller::$GAMINAS['action']('Amarr', 1034, '2014-01-23');
-} else {
+	if ($GAMINAS['folder'] != '') {																								// Если же мы зрим не в корень, то надо подключить контроллер и вид
+		$controller = $GAMINAS['folder'] . '_' . $GAMINAS['controller'];
+		INCLUDE_ONCE('php/controllers/' . $GAMINAS['folder'] . '/' . $GAMINAS['controller'] . '.php');
+		INCLUDE_ONCE('html/views/' . $GAMINAS['folder'] . '/' . $GAMINAS['controller'] . '.html');
+		$controller::$GAMINAS['action']($GAMINAS['params']);
+		
+	}
+	
+} else {																																				// Если же обращение идет непосредственно к файлу
 	INCLUDE(trim($_SERVER['REQUEST_URI'], '/'));
+	// echo 'Nonono, David Blaine!';
 }
 ?>

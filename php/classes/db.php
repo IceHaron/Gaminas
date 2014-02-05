@@ -46,10 +46,9 @@ class db {
 	
 	public static function query($query) {
 		$query_result = mysqli_query(self::$con, $query);
-		fb(gettype($query_result));
 		if (gettype($query_result) !== 'boolean') $res = mysqli_fetch_all($query_result);
-		else $res = ($query_result === FALSE) ? 'FALSE: ' . mysqli_error(self::$con) : $query_result;
-		fb($res);
+		else $res = ($query_result === FALSE) ? mysqli_error(self::$con) : $query_result;
+		fb($res, 'RESULT');
 		if (mysqli_error(self::$con) != '') return mysqli_error(self::$con);
 		return $res;
 	}

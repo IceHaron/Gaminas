@@ -3,14 +3,14 @@
 *	
 *	Ну конечно же, всякие разные штуки при завершении загрузки страницы
 *	
-*/
+**/
 $(document).ready(function() {
 
 /**
 *	
 *	Клик на заголовке скрывает/раскрывает фильтр и что-то еще делает, пока не придумал
 *	
-*/
+**/
 $('#namesearch').keyup(function(key) {
 	if (key.keyCode != '16' && $(this).val().length > 0) {												// Не буду отслеживать Шифт
 		what = $(this).val().toLowerCase();
@@ -29,9 +29,9 @@ $('#namesearch').keyup(function(key) {
 *	
 *	Клик на заголовке скрывает/раскрывает фильтр и что-то еще делает, пока не придумал
 *	
-*/
+**/
   $('#maincaption').click(function() {
-    $('#mainsupport').toggle();																									// Фильтр пока существует только в библиотеке, так еще и нереализованный, надо допилить
+    $('#mainsupport').toggle();																									// Фильтр пока существует только в библиотеке, в этот блок думаю напихать всяких разных удобных штук
   });
   
 /**
@@ -39,10 +39,18 @@ $('#namesearch').keyup(function(key) {
 *	Перехватчик клика на логофф, кнопка должна что-то делать хитрое,
 *	пока просто перенаправляет на страничку логоффа
 *	
-*/
+**/
   $('#logoff').click(function() {
     window.location = '/auth/logoff';
   });
+	
+/**
+*	
+*	Работа с табличкой TODO
+*	
+**/
+
+	$('.DONE').parent().hide();																										// Скрываем то, что я уже сделал, чтоб не мешались
 	
 	$('#todo tbody tr').hover(function() {
 		$(this).children('td').animate({'opacity': '1'}, 100);
@@ -60,7 +68,7 @@ $('#namesearch').keyup(function(key) {
 *	
 *	Функция логина от uLogin
 *	
-*/
+**/
 function login(token){
 	// Отправляем AJAX-запрос к ним
 	$.getJSON("//ulogin.ru/token.php?host=" + encodeURIComponent(location.toString()) + "&token=" + token + "&callback=?",
