@@ -158,7 +158,7 @@ $GAMINAS = array(		 																														// Глобальная пер
 	
 // Делаем блок TODO, надо бы это запихнуть в какой-нибудь отдельный файл
 
-$file = fopen('TODO.txt', 'r');																									// Разбираем TODO.txt
+$file = fopen('source/txt/TODO.txt', 'r');																									// Разбираем TODO.txt
 $c = 0;
 while ($todostring = fgets($file)) {
 	$todoarr = explode('--', $todostring);
