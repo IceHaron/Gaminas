@@ -15,11 +15,11 @@ foreach($arr['result']['rowset']['row'] as $system) {
 // $arr['result']['dataTime'] - time of query ETC
 // echo '</pre>';
 
-$written = json_decode(file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/source/txt/amarr.txt'), TRUE);
+$written = json_decode(file_get_contents((isset($_SERVER['OLDPWD']) ? $_SERVER['OLDPWD'] : $_SERVER['DOCUMENT_ROOT']) . '/source/txt/amarr.txt'), TRUE);
 $written[ $arr['cachedUntil'] ] = $amarr;
 $write = json_encode($written);
 var_dump($write);
-$file = fopen($_SERVER['DOCUMENT_ROOT'] . '/source/txt/amarr.txt', 'w+b');
+$file = fopen((isset($_SERVER['OLDPWD']) ? $_SERVER['OLDPWD'] : $_SERVER['DOCUMENT_ROOT']) . '/source/txt/amarr.txt', 'w+b');
 fwrite($file, $write);
 fclose($file);
 ?>
