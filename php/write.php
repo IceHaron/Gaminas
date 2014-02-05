@@ -6,23 +6,41 @@ $text = file_get_contents('https://api.eveonline.com/map/Jumps.xml.aspx');
 // http://wiki.eve-id.net/Main_Page Очень полезный сайтец с формулами и всякими штуками для АПИ
 $xml = new SimpleXMLElement('https://api.eveonline.com/map/Jumps.xml.aspx',0,TRUE); // 30002187 Amarr
 $arr = json_decode(json_encode($xml), TRUE);
-foreach($arr['result']['rowset']['row'] as $system) {
-	if ($system['@attributes']['solarSystemID'] == 30002187) $amarr = $system['@attributes']['shipJumps'];
+$stars = json_decode(file_get_contents($rootfolder . '/source/txt/systems.txt'), TRUE);
+$regions = json_decode(file_get_contents($rootfolder . '/source/txt/regions.txt'), TRUE);
+
+// foreach ($stars as $starID => $star) {
+	// $res[ $regions[ $star['regionID'] ] ][ $star['name'] ][ $arr['cachedUntil'] ] = '0';
+// }
+
+foreach ($regions as $id => $name) {
+	$written = json_decode(file_get_contents($rootfolder . '/source/txt/systemstats/' . $name . '.txt'), TRUE);
+	$res[ $name ] = $written;
 }
-$stars = json_decode(file_get_contents($rootfolder . '/source/js/SolarSystem.js'), TRUE);
-$regions = json_decode(file_get_contents($rootfolder . '/source/js/Region.js'), TRUE);
-echo '<pre>';
-// var_dump($stars);
-// var_dump($xml->result->rowset->row);
+foreach($arr['result']['rowset']['row'] as $system) {
+	$sysid = $system['@attributes']['solarSystemID'];
+	$jumps = $system['@attributes']['shipJumps'];
+	$res[ $regions[ $stars[ $sysid ]['regionID'] ] ][ $stars[ $sysid ]['name'] ][ $arr['cachedUntil'] ] = $jumps;
+}
+
+// echo '<pre>';
+// var_dump($res);
+// echo '</pre>';
+
 // $arr['currentTime'] - current time ETC
 // $arr['result']['dataTime'] - time of query ETC
-echo '</pre>';
 
-$written = json_decode(file_get_contents($rootfolder . '/source/txt/amarr.txt'), TRUE);
-$written[ $arr['cachedUntil'] ] = $amarr;
-$write = json_encode($written);
-var_dump($write);
-$file = fopen($rootfolder . '/source/txt/amarr.txt', 'w+b');
-fwrite($file, $write);
+$trigger = array();
+
+foreach ($res as $region => $systemset) {
+$write = json_encode($systemset);
+$file = fopen($rootfolder . '/source/txt/systemstats/' . $region . '.txt', 'w+b');
+$wrote = fwrite($file, $write);
+if ($wrote === FALSE) $trigger[] = $region;
 fclose($file);
+}
+if (count($trigger) == 0) echo 'Writing stats for all regions successfull!';
+else foreach ($trigger as $reg) {
+	echo 'Writing stats for ' . $reg . ' failed!<br/>';
+}
 ?>
