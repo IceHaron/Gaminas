@@ -39,7 +39,7 @@ $wrote = fwrite($file, $write);
 if ($wrote === FALSE) $trigger[] = $region;
 fclose($file);
 }
-if (count($trigger) == 0) echo 'Writing stats for all regions successfull!';
+if (count($trigger) == 0) { /*echo 'Writing stats for all regions successfull!';*/ }
 else foreach ($trigger as $reg) {
 	echo 'Writing stats for ' . $reg . ' failed!<br/>';
 }
