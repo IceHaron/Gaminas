@@ -6,7 +6,7 @@ $user = 'srv44030_gaminas';
 $pw = '230105';
 $base = 'srv44030_gaminas';
 
-// Подключаемся к базе
+// РџРѕРґРєР»СЋС‡Р°РµРјСЃСЏ Рє Р±Р°Р·Рµ
 $link = mysqli_connect($host, $user, $pw, $base);
 mysqli_set_charset($link, "utf8");
 
@@ -16,10 +16,10 @@ while ($row = mysqli_fetch_assoc($q)) {
 	$table[ $row['region'] ] = $row['activity'];
 }
 
-// Тырим XML, превращаем его в JSON и выдираем нужные нам системы
+// РўС‹СЂРёРј XML, РїСЂРµРІСЂР°С‰Р°РµРј РµРіРѕ РІ JSON Рё РІС‹РґРёСЂР°РµРј РЅСѓР¶РЅС‹Рµ РЅР°Рј СЃРёСЃС‚РµРјС‹
 $text = file_get_contents('https://api.eveonline.com/map/Jumps.xml.aspx');
-// http://eve-marketdata.com/developers/solarsystems.php ID систем
-// http://wiki.eve-id.net/Main_Page Очень полезный сайтец с формулами и всякими штуками для АПИ
+// http://eve-marketdata.com/developers/solarsystems.php ID СЃРёСЃС‚РµРј
+// http://wiki.eve-id.net/Main_Page РћС‡РµРЅСЊ РїРѕР»РµР·РЅС‹Р№ СЃР°Р№С‚РµС† СЃ С„РѕСЂРјСѓР»Р°РјРё Рё РІСЃСЏРєРёРјРё С€С‚СѓРєР°РјРё РґР»СЏ РђРџР
 $xml = new SimpleXMLElement('https://api.eveonline.com/map/Jumps.xml.aspx',0,TRUE); // 30002187 Amarr
 $arr = json_decode(json_encode($xml), TRUE);
 $stars = json_decode(file_get_contents($rootfolder . '/source/txt/systems.txt'), TRUE);
