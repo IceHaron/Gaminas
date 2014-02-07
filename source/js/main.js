@@ -60,6 +60,41 @@ $('#namesearch').keyup(function(key) {
 		else $(this).children('td').animate({'opacity': '0.3'}, 100);
 	});
 	
+/**
+*	
+*	Вывод графика активности по регионам
+*	
+**/
+	
+	$('.graph').each(function () {
+		var w = parseInt($(this).width());
+		var h = parseInt($(this).height());
+		$(this).height(w);
+		$(this).width(500);
+		$(this).css( 'margin-bottom', h - w - 500 );
+	});
+	var actarr = {};
+	var max = 0;
+	var height = Math.floor( $('.graph').height() / 97 );
+	var leftpos = $('.graph').offset().left;
+	
+	$('.sumregion').each(function() {
+		var name = this.getAttribute('data-region');
+		var jumps = parseInt(this.getAttribute('data-jumps'));
+		actarr[name] = jumps;
+		
+		if (jumps > max) max = jumps
+		
+	});
+	
+	$('.sumregion').each(function() {
+		var jumps = parseInt(this.getAttribute('data-jumps'));
+		var width = Math.floor( jumps / max * $('.graph').width() ) + 1;
+		$(this).css({ 'height' : height, 'width' : width });
+		$(this).children('div').css( 'font-size', height - 1 );
+	});
+
+	
 /* End of READY() */
 });
 

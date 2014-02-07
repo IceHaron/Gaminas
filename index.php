@@ -181,18 +181,17 @@ if (!$GAMINAS['isfile']) {																											// Если обращае�
 	$GAMINAS['source'] = 'http://' . root::$path . '/source';											// Папка, откуда берется весь хлам
 	require_once('php/controllers/index.php');																		// Подключаем контроллер, хорошо бы сделать подгрузку контроллера в зависимости от адреса или что-нибудь типа того
 	fb($GAMINAS, 'GAMINAS');
-	INCLUDE_ONCE('html/index.html');																							// Ну и подгружаем макет, конечно же
 
 	if ($GAMINAS['folder'] != '') {																								// Если же мы зрим не в корень, то надо подключить контроллер и вид
 		$controller = $GAMINAS['folder'] . '_' . $GAMINAS['controller'];
 		INCLUDE_ONCE('php/controllers/' . $GAMINAS['folder'] . '/' . $GAMINAS['controller'] . '.php');
-		INCLUDE_ONCE('html/views/' . $GAMINAS['folder'] . '/' . $GAMINAS['controller'] . '.html');
-		$controller::$GAMINAS['action']($GAMINAS['params']);
-		
+		// INCLUDE_ONCE('html/views/' . $GAMINAS['folder'] . '/' . $GAMINAS['controller'] . '.html');
+		$controller::$GAMINAS['action']($GAMINAS['params']);		
 	}
+	INCLUDE_ONCE('html/index.html');																							// Ну и подгружаем макет, конечно же
 	
 } else {																																				// Если же обращение идет непосредственно к файлу
-	INCLUDE(trim($_SERVER['REQUEST_URI'], '/'));
-	// echo 'Nonono, David Blaine!';
+	// INCLUDE(trim($_SERVER['REQUEST_URI'], '/'));
+	echo 'Nonono, David Blaine!';
 }
 ?>

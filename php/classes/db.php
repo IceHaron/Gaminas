@@ -46,9 +46,11 @@ class db {
 	
 	public static function query($query) {
 		$query_result = mysqli_query(self::$con, $query);
-		if (gettype($query_result) !== 'boolean') $res = mysqli_fetch_all($query_result);
+		if (gettype($query_result) !== 'boolean') {
+			while ($row = mysqli_fetch_assoc($query_result)) $res[] = $row;
+		}
 		else $res = ($query_result === FALSE) ? mysqli_error(self::$con) : $query_result;
-		fb($res, 'RESULT');
+		// fb($res, 'RESULT');
 		if (mysqli_error(self::$con) != '') return mysqli_error(self::$con);
 		return $res;
 	}
