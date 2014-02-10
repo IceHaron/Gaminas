@@ -114,6 +114,10 @@ a.nodeco {
 	width: 100%;
 	margin-top: 500px;
 	background-color: white;
+	-webkit-transform-origin: left top 0;
+	-moz-transform-origin: left top 0;
+	-o-transform-origin: left top 0;
+	-ms-transform-origin: left top 0;
 	transform-origin: left top 0;
 	-moz-transform: rotate(-90deg);
 	-ms-transform: rotate(-90deg);
