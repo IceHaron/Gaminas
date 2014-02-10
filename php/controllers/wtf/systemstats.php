@@ -45,8 +45,18 @@ class wtf_systemstats {
 				
 			}
 			
-			$maincontent .= '<div class="sumregion" data-region="' . $region . '" data-jumps="' . $sumregion . '"><div class="regname">' . $region . '(' . $sumregion . ')</div></div>';
+			// $maincontent .= '<div class="sumregion" data-region="' . $region . '" data-jumps="' . $sumregion . '"><div class="regname">' . $region . '(' . $sumregion . ')</div></div>';
 			
+		}
+		foreach ($activity as $region => $systemset) {
+			foreach ($systemset as $system => $act) {
+				if ($system == 'Amarr') {
+					foreach ($act as $ts => $jumps) {
+						// Не имеет смысла, просто для красивости сделал, надо удалить и переделать
+						$maincontent .= '<div class="sumregion" data-region="' . $system . '" data-jumps="' . $jumps . '"><div class="regname">' . $system . '(' . date('d-m-Y H:i', $ts) . ')</div></div>';
+					}
+				}
+			}
 		}
 		
 		$maincontent .= '</div>';

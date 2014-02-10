@@ -14,14 +14,22 @@ $base = 'srv44030_gaminas';
 $link = mysqli_connect($host, $user, $pw, $base);
 mysqli_set_charset($link, "utf8");
 
-// Селектим все-все-все
-
+// Селектим дневную стату
 $q = mysqli_query($link, 'SELECT SQL_CACHE * FROM activity_daily');
 if (!$q) echo mysqli_error($link);
 
-// И собираем из этого удобоваримый массив
+// Собираем из этого удобоваримый массив
 while ($row = mysqli_fetch_assoc($q)) {
-	$table[ $row['region'] ] = $row['activity'];
+	$dailytable[ $row['region'] ] = $row['activity'];
+}
+
+// Селектим месячную стату
+$q = mysqli_query($link, 'SELECT SQL_CACHE * FROM activity_monthly');
+if (!$q) echo mysqli_error($link);
+
+// И из этого тоже собираем удобоваримый массив
+while ($row = mysqli_fetch_assoc($q)) {
+	$monthlytable[ $row['region'] ] = $row['activity'];
 }
 
 // Тырим XML и превращаем его в JSON
@@ -38,24 +46,53 @@ foreach ($stars as $starID => $star) {
 }
 
 foreach ($skeleton as $region => $systems) {
-	$written = json_decode($table[ $region ], TRUE);															// Смотрим, какие данные у нас уже есть
+	// Смотрим, какие данные у нас уже есть
+	$dailywritten = json_decode($dailytable[ $region ], TRUE);
+	$monthlywritten = json_decode($monthlytable[ $region ], TRUE);
 	
-	if ($written) {
-	
+	if ($dailywritten) {
 		foreach($systems as $sysid => $system) {
-			$activity = isset($written[ $system ]) ? $written[ $system ] : array();		// Активность системы забираем в отдельную переменную
+			$dailyactivity = isset($dailywritten[ $system ]) ? $dailywritten[ $system ] : array();		// Активность системы забираем в отдельную переменную
+			krsort($dailyactivity);
+			$count = 48;
+
+			foreach ($dailyactivity as $ts => $jumps) {
 			
-			foreach ($activity as $ts => $jumps) {
-				$res[ $region ][ $system ][ $ts ] = $jumps;															// В итоговый массив заталкиваем информацию о прошлых часах
+				if ($count > 0) {
+					$daily[ $region ][ $system ][ $ts ] = $jumps;															// В итоговый массив заталкиваем информацию о прошлых часах
+					// var_dump(date('d-m-Y', $ts), ' - daily <br/>');
+				}
+				
+				if ((int)date('d', strtotime('now')) - (int)date('d', $ts) == 1) {
+					@$monthly[ $region ][ $system ][ date('d-m-Y', $ts) ] += $jumps;
+					// var_dump(date('d-m-Y', $ts), ' - monthly <br/>');
+				}
+				
+				$count--;
 			}
 			
-			$res[ $region ][ $system ][ $cachetime ] = '0';														// Ставим в 0 нынешний час, в XML отсутствуют системы с 0 активностью, так что эта строка необходима для полноты картины, в будущем наверное тоже надо убрать нулевые часы, но только если совсем беда с производительностью будет
+			$daily[ $region ][ $system ][ $cachetime ] = '0';														// Ставим в 0 нынешний час, в XML отсутствуют системы с 0 активностью, так что эта строка необходима для полноты картины, в будущем наверное тоже надо убрать нулевые часы, но только если совсем беда с производительностью будет
 		}
 		
 	} else {
 	
 		foreach($systems as $sysid => $system) {
-			$res[ $region ][ $system ][ $cachetime ] = '0';														// Ну это происходит если у нас вдруг отсутствуют изначальные данные, это уже неактуально, но  лишняя заглушка не помешает
+			$daily[ $region ][ $system ][ $cachetime ] = '0';														// Ну это происходит если у нас вдруг отсутствуют изначальные данные, это уже неактуально, но  лишняя заглушка не помешает
+		}
+		
+	}
+	
+	if ($monthlywritten) {
+	
+		foreach($systems as $sysid => $system) {
+			$monthlyactivity = isset($monthlywritten[ $system ]) ? $monthlywritten[ $system ] : array();		// Активность системы забираем в отдельную переменную
+			
+			foreach ($monthlyactivity as $date => $jumps) {
+			
+				$monthly[ $region ][ $system ][ $date ] = $jumps;															// В итоговый массив заталкиваем информацию о прошлых часах
+				
+			}
+			
 		}
 		
 	}
@@ -66,7 +103,7 @@ foreach ($skeleton as $region => $systems) {
 foreach($arr['result']['rowset']['row'] as $system) {
 	$sysid = $system['@attributes']['solarSystemID'];
 	$jumps = $system['@attributes']['shipJumps'];
-	$res[ $regions[ $stars[ $sysid ]['regionID'] ] ][ $stars[ $sysid ]['name'] ][ $cachetime ] = $jumps;
+	$daily[ $regions[ $stars[ $sysid ]['regionID'] ] ][ $stars[ $sysid ]['name'] ][ $cachetime ] = $jumps;
 }
 
 // $arr['currentTime'] - current time ETC
@@ -75,16 +112,16 @@ foreach($arr['result']['rowset']['row'] as $system) {
 // Инициализируем управляющие переменные
 // $trigger = array();
 $query_arr = array();
+$i = 0;
 
 foreach ($regions as $id => $region) {
-	$systemset = $res[ $region ];
-	$write = json_encode($systemset);
-	// Писать в файлы уже немодно, оставлю с пометкой Deprecated в комментах
-	// $file = fopen($rootfolder . '/source/txt/systemstats/' . $region . '.txt', 'w+b');
-	// $wrote = fwrite($file, $write);
-	// if ($wrote === FALSE) $trigger[] = $region;
-	// fclose($file);
-	$query_arr[] .= "UPDATE `activity_daily` SET `activity` = '$write' WHERE `region` = '$region'; ";
+	$dailysystemset = $daily[ $region ];
+	$dailywrite = json_encode($dailysystemset);
+	$query_arr[] = "UPDATE `activity_daily` SET `activity` = '$dailywrite' WHERE `region` = '$region';";
+	$monthlysystemset = $monthly[ $region ];
+	$monthlywrite = json_encode($monthlysystemset);
+	$query_arr[] = "UPDATE `activity_monthly` SET `activity` = '$monthlywrite' WHERE `region` = '$region';";
+	// $query_arr[] = "INSERT INTO `activity_monthly` SET `activity` = '$monthlywrite', `region` = '$region';";
 }
 
 // echo '<pre>';

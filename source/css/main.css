@@ -126,8 +126,11 @@ a.nodeco {
 	background-color: #afb;
 	overflow: visible;
 }
+.sumregion:hover {
+	background-color: #abf;
+}
 .regname {
-	width: 150px;
+	width: 350px;
 	font-size: 10px;
 }
 

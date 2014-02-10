@@ -75,7 +75,7 @@ $('#namesearch').keyup(function(key) {
 	});
 	var actarr = {};
 	var max = 0;
-	var height = Math.floor( $('.graph').height() / 97 );
+	var height = Math.floor( $('.graph').height() / 48 );
 	var leftpos = $('.graph').offset().left;
 	
 	$('.sumregion').each(function() {
