@@ -66,33 +66,35 @@ $('#namesearch').keyup(function(key) {
 *	
 **/
 	
-	$('.graph').each(function () {
-		var w = parseInt($(this).width());
-		var h = parseInt($(this).height());
-		$(this).height(w);
-		$(this).width(500);
-		$(this).css( 'margin-bottom', h - w - 500 );
-	});
-	var actarr = {};
-	var max = 0;
-	var height = Math.floor( $('.graph').height() / 48 );
-	var leftpos = $('.graph').offset().left;
-	
-	$('.sumregion').each(function() {
-		var name = this.getAttribute('data-region');
-		var jumps = parseInt(this.getAttribute('data-jumps'));
-		actarr[name] = jumps;
+	if ($('.graph').attr('class') != null && $('.sumregion').attr('class') != null) {
+		$('.graph').each(function () {
+			var w = parseInt($(this).width());
+			var h = parseInt($(this).height());
+			$(this).height(w);
+			$(this).width(500);
+			$(this).css( 'margin-bottom', h - w - 500 );
+		});
+		var actarr = {};
+		var max = 0;
+		var height = Math.floor( $('.graph').height() / 48 );
+		var leftpos = $('.graph').offset().left;
 		
-		if (jumps > max) max = jumps
+		$('.sumregion').each(function() {
+			var name = this.getAttribute('data-region');
+			var jumps = parseInt(this.getAttribute('data-jumps'));
+			actarr[name] = jumps;
+			
+			if (jumps > max) max = jumps
+			
+		});
 		
-	});
-	
-	$('.sumregion').each(function() {
-		var jumps = parseInt(this.getAttribute('data-jumps'));
-		var width = Math.floor( jumps / max * $('.graph').width() ) + 1;
-		$(this).css({ 'height' : height, 'width' : width });
-		$(this).children('div').css( 'font-size', height - 1 );
-	});
+		$('.sumregion').each(function() {
+			var jumps = parseInt(this.getAttribute('data-jumps'));
+			var width = Math.floor( jumps / max * $('.graph').width() ) + 1;
+			$(this).css({ 'height' : height, 'width' : width });
+			$(this).children('div').css( 'font-size', height - 1 );
+		});
+	}
 
 	
 /* End of READY() */

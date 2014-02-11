@@ -100,6 +100,7 @@ class root {
 		
 			if ($path[0] != '') {
 				$count = count($path);																									// Считаем количество уровней в адресе
+				$path[ $count-1 ] = preg_replace('/\?.+/', '', $path[ $count-1 ]);			// Убираем GET, в адресе он нам не нужен, он уже в переменной
 				
 				if ($count == 1) {																											// Один уровень: <host>/library
 					$GAMINAS['controller'] = 'index';
@@ -117,7 +118,6 @@ class root {
 					$GAMINAS['params'] = array();
 					
 				} else if ($count >= 4) {																								// Четыре и более уровня: <host>/wtf/four/level/addr...
-					$GAMINAS['folder'] = $path[0];
 					$GAMINAS['controller'] = $path[1];
 					$GAMINAS['action'] = $path[2];
 					$GAMINAS['params'] = array_slice($path, 3);
@@ -180,14 +180,17 @@ if (!$GAMINAS['isfile']) {																											// Если обращае�
 
 	$GAMINAS['source'] = 'http://' . root::$path . '/source';											// Папка, откуда берется весь хлам
 	require_once('php/controllers/index.php');																		// Подключаем контроллер, хорошо бы сделать подгрузку контроллера в зависимости от адреса или что-нибудь типа того
-	fb($GAMINAS, 'GAMINAS');
 
 	if ($GAMINAS['folder'] != '') {																								// Если же мы зрим не в корень, то надо подключить контроллер и вид
 		$controller = $GAMINAS['folder'] . '_' . $GAMINAS['controller'];
 		INCLUDE_ONCE('php/controllers/' . $GAMINAS['folder'] . '/' . $GAMINAS['controller'] . '.php');
-		// INCLUDE_ONCE('html/views/' . $GAMINAS['folder'] . '/' . $GAMINAS['controller'] . '.html');
-		$controller::$GAMINAS['action']($GAMINAS['params']);		
-	}
+		$controller::$GAMINAS['action']($GAMINAS['params']);
+		// Здесь я забираю содержимое вида и управляющие конструкции меняю на содержимое переменных из $GAMINAS - подсмотрел этот способ реализации MVC
+		$page = file_get_contents('html/views/' . $GAMINAS['folder'] . '/' . $GAMINAS['controller'] . '.html');
+		$page = str_replace('{maincontent}', $GAMINAS['maincontent'], $page);
+	} else $page = $GAMINAS['maincontent'];
+	
+	fb($GAMINAS, 'GAMINAS');
 	INCLUDE_ONCE('html/index.html');																							// Ну и подгружаем макет, конечно же
 	
 } else {																																				// Если же обращение идет непосредственно к файлу
