@@ -107,37 +107,6 @@ a.nodeco {
 	border: 2px dotted red;
 }
 
-/* Для графика активности */
-
-.graph {
-	height: 500px;
-	width: 100%;
-	margin-top: 500px;
-	background-color: white;
-	-webkit-transform-origin: left top 0;
-	-moz-transform-origin: left top 0;
-	-o-transform-origin: left top 0;
-	-ms-transform-origin: left top 0;
-	transform-origin: left top 0;
-	-moz-transform: rotate(-90deg);
-	-ms-transform: rotate(-90deg);
-	-webkit-transform: rotate(-90deg);
-	-o-transform: rotate(-90deg);
-	transform: rotate(-90deg);
-}
-.sumregion {
-	height: 20px;
-	background-color: #afb;
-	overflow: visible;
-}
-.sumregion:hover {
-	background-color: #abf;
-}
-.regname {
-	width: 350px;
-	font-size: 10px;
-}
-
 /* Где-то здесь должен быть пол */
 
 /* Блок backtrace */

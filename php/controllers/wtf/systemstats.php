@@ -21,7 +21,9 @@ class wtf_systemstats {
 		global $GAMINAS;
 		
 		if (!isset($_GET['mode']) && !isset($_GET['region']) && !isset($_GET['system'])) {
+			$maincaption = 'Статистика активности звездных систем';
 			$maincontent = '';
+			$mainsupport = '';
 		} else {
 			$q = db::query('SELECT SQL_CACHE * FROM `activity_daily`');
 			// var_dump($q);
@@ -66,9 +68,27 @@ class wtf_systemstats {
 			$maincontent .= '</div>';
 		}
 		
-		$GAMINAS['maincaption'] = 'Статистика активности звездных систем';
+		$regions = json_decode(file_get_contents(root::$rootfolder . '/source/txt/regions.txt'), TRUE);
+		$regcheckboxes = '';
+		foreach ($regions as $regid => $regname) {
+			$regcheckboxes .= '<label><input type="checkbox" name="region">' . $regname . '</label>';
+		}
+		$stars = json_decode(file_get_contents(root::$rootfolder . '/source/txt/systems.txt'), TRUE);
+		$syscheckboxes = '';
+		foreach ($stars as $sysid => $sysinfo) {
+			$ss = round($sysinfo['security'], 1);
+			if ($ss === 1.0) $color = 'skyblue';
+			if ($ss <= 0.9 && $ss > 0.4) $color = 'green';
+			if ($ss <= 0.4 && $ss > 0.0) $color = 'orange';
+			if ($ss <= 0.0) $color = 'red';
+			$syscheckboxes .= '<label><input type="checkbox" name="system"><div style="width:25px; float: left; color:' . $color . '">' . $ss . '</div>' . $sysinfo['name'] . '</label>';
+		}
+		
+		$GAMINAS['maincaption'] = $maincaption;
 		$GAMINAS['mainsupport'] = $mainsupport;
 		$GAMINAS['maincontent'] = $maincontent;
+		$GAMINAS['regcheckboxes'] = $regcheckboxes;
+		$GAMINAS['syscheckboxes'] = $syscheckboxes;
 	}
 
 }

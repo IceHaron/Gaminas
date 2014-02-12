@@ -1,5 +1,28 @@
 <div id="maincaption">{maincaption}</div>
-<div id="mainsupport">{mainsupport}</div>
+<div id="mainsupport">
+	<div class="graphfilter" id="time">
+		<label><input type="checkbox" class="all">Все (рядом)</label>
+		<form>
+			<label><input type="checkbox" name="time">Часы (последние 48)</label>
+			<label><input type="checkbox" name="time">Дни (последние 60)</label>
+			<label><input type="checkbox" name="time">Месяцы</label>
+		</form>
+	</div>
+	<div class="graphfilter" id="region">
+		<label><input type="checkbox" class="all">Все</label>
+		<form>
+			{regcheckboxes}
+		</form>
+	</div>
+	<div class="graphfilter" id="system">
+		<label><input type="checkbox" class="all">Все</label>
+		<form>
+			{syscheckboxes}
+		</form>
+	</div>
+	{mainsupport}
+	<div class="clear"></div>
+</div>
 <div id="maincontent">
 	{maincontent}
 	<div class="clear"></div>

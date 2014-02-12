@@ -11,7 +11,7 @@ class root {
 
   public static $path; 																																		// Адрес, куда мы обращаемся, берется из $_SERVER['HTTP_HOST']
   public static $server; 																																	// Переменная $_SERVER, добавил сюда просто для тренировки.
-
+	public static $rootfolder;
 	public static function init() {
 		return new self();
 	}
@@ -24,9 +24,11 @@ class root {
   private function root() {
 		header("HTTP/1.0 200 OK");																									// Вывешивается хэдер, иначе любая страница кроме / выдает 404 в хэдере
     $address = $_SERVER['HTTP_HOST'];
+		self::$rootfolder = isset($_SERVER['HOME']) ? $_SERVER['HOME'].'/gaminas' : $_SERVER['DOCUMENT_ROOT'];
     self::$path = $address;																											// Отдаем в классовое свойство адрес...
     self::$server = $_SERVER;																										// ...и переменную $_SERVER
 		self::url_parse();																													// Разбираем адрес
+
   }
 
 /**
@@ -187,14 +189,17 @@ if (!$GAMINAS['isfile']) {																											// Если обращае�
 		$controller::$GAMINAS['action']($GAMINAS['params']);
 		// Здесь я забираю содержимое вида и управляющие конструкции меняю на содержимое переменных из $GAMINAS - подсмотрел этот способ реализации MVC
 		$page = file_get_contents('html/views/' . $GAMINAS['folder'] . '/' . $GAMINAS['controller'] . '.html');
-		$page = str_replace('{maincontent}', $GAMINAS['maincontent'], $page);
+		preg_match_all('/\{(\w+)\}/', $page, $matches);
+		foreach ($matches[1] as $word) {
+			$page = str_replace('{' . $word . '}', $GAMINAS[$word], $page);						// Если здесь возникает ошибка, то значит в массиве $GAMINAS нет элемента с именем, которое использовано в каком-то макете
+		}
 	} else $page = $GAMINAS['maincontent'];
 	
 	fb($GAMINAS, 'GAMINAS');
 	INCLUDE_ONCE('html/index.html');																							// Ну и подгружаем макет, конечно же
 	
 } else {																																				// Если же обращение идет непосредственно к файлу
-	INCLUDE(trim($_SERVER['REQUEST_URI'], '/'));
-	// echo 'Nonono, David Blaine!';
+	// INCLUDE(trim($_SERVER['REQUEST_URI'], '/'));
+	echo 'Nonono, David Blaine!';
 }
 ?>
