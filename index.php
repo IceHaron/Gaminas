@@ -175,6 +175,7 @@ while ($todostring = fgets($file)) {
 
 session_start();																																// Стартуем сессию
 INCLUDE_ONCE('php/firephp/fb.php');																							// Подключаем FirePHP
+ob_start();
 // fb($_SERVER);
 root::init();																																		// Инициализируем коренной класс
 
@@ -188,7 +189,8 @@ if (!$GAMINAS['isfile']) {																											// Если обращае�
 		INCLUDE_ONCE('php/controllers/' . $GAMINAS['folder'] . '/' . $GAMINAS['controller'] . '.php');
 		$controller::$GAMINAS['action']($GAMINAS['params']);
 		// Здесь я забираю содержимое вида и управляющие конструкции меняю на содержимое переменных из $GAMINAS - подсмотрел этот способ реализации MVC
-		$page = file_get_contents('html/views/' . $GAMINAS['folder'] . '/' . $GAMINAS['controller'] . '.html');
+		if (!isset($GAMINAS['notemplate'])) $page = file_get_contents('html/views/' . $GAMINAS['folder'] . '/' . $GAMINAS['controller'] . '.html');
+		else $page = '';
 		preg_match_all('/\{(\w+)\}/', $page, $matches);
 		foreach ($matches[1] as $word) {
 			$page = str_replace('{' . $word . '}', $GAMINAS[$word], $page);						// Если здесь возникает ошибка, то значит в массиве $GAMINAS нет элемента с именем, которое использовано в каком-то макете
@@ -196,7 +198,7 @@ if (!$GAMINAS['isfile']) {																											// Если обращае�
 	} else $page = $GAMINAS['maincontent'];
 	
 	fb($GAMINAS, 'GAMINAS');
-	INCLUDE_ONCE('html/index.html');																							// Ну и подгружаем макет, конечно же
+	if (!isset($GAMINAS['notemplate'])) INCLUDE_ONCE('html/index.html');					// Ну и подгружаем макет, конечно же
 	
 } else {																																				// Если же обращение идет непосредственно к файлу
 	// INCLUDE(trim($_SERVER['REQUEST_URI'], '/'));

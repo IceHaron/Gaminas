@@ -65,7 +65,7 @@ $('#namesearch').keyup(function(key) {
 *	Вывод графика активности по регионам
 *	
 **/
-	
+
 	if ($('.graph').attr('class') != null && $('.sumregion').attr('class') != null) {
 		$('.graph').each(function () {
 			var w = parseInt($(this).width());
@@ -95,7 +95,48 @@ $('#namesearch').keyup(function(key) {
 			$(this).children('div').css( 'font-size', height - 1 );
 		});
 	}
+	
+	/* Фильтрация для графика: при клике на "все" выделять/снимать галки у всех детей */
+	$('input.all').click(function() {
+		$chk = this.checked;
+		$(this).parent().next().children().children('input').each(function() {this.checked = $chk;});
+	});
+	
+	/* Фильтрация систем по региону: прогрузка по AJAX списка */
+	$('input[name="region"]').click(function() {
+		var r = '';
+		$('input[name="region"]:checked').each(function() {
+			r += ',' + $(this).attr('data-id');
+		});
+		var regionset = escape(r.substr(1));
+		getSystemList(regionset);
+	});
 
+	function getSystemList(regions) {
+		$.ajax({
+			type: 'GET',
+			url: 'getsystems',
+			data: {'regions' : regions},
+			dataType: 'json',
+			success: function(data) {
+				var sysinputs = '<label><input type="checkbox" class="all">Все</label><form>';
+				for (sysid in data) {
+					var sysinfo = data[sysid];
+					var ss = parseFloat(sysinfo.security.toPrecision(1));
+					if (ss === 1.0) color = 'skyblue';
+					if (ss <= 0.9 && ss > 0.6) color = 'green';
+					if (ss <= 0.6 && ss > 0.4) color = 'yellow';
+					if (ss <= 0.4 && ss > 0.0) color = 'orange';
+					if (ss <= 0.0) color = 'red';
+					if (sysinfo['name'].search('/J\d{6}/') != -1) sysname = '&lt;WH&gt; ' + sysinfo['name'];
+					else sysname = sysinfo['name'];
+					sysinputs += '<label><input type="checkbox" name="system" data-id="' + sysid + '"><div style="width:28px; float: left; color:' + color + '">' + ss + '</div>' + sysname + '</label>';
+				}
+				sysinputs += '</form>';
+				$('#system').html(sysinputs);
+			}
+		});
+	}
 	
 /* End of READY() */
 });

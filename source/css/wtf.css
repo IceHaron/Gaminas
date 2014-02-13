@@ -31,11 +31,12 @@
 
 .graphfilter {
 	height: 200px;
-	width: 200px;
+	width: 220px;
 	float: left;
 	margin: 10px;
 	border: 1px solid grey;
-	background-color: #eee;
+	background-color: #002;
+	color: #bbb;
 	overflow-y: scroll;
 }
 .graphfilter form label {
