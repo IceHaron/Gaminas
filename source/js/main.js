@@ -199,7 +199,11 @@ function toggleStars(regid, state) {
 *	
 **/
 
-function drawGraph(time = 'daily', mode = 'system', region = 'Domain', star = 'Amarr') {			// На время разработки определю дефолтную отрисовку в Амарре
+function drawGraph(time, mode, region, star) {			// На время разработки определю дефолтную отрисовку в Амарре
+	var time = 'daily';
+	var mode = 'system';
+	var region = 'Domain';
+	var star = 'Amarr';
 	$('#shadow').show();
 	$('#loading').show();
 	$('#annotation').text('Рисуем график активности');
