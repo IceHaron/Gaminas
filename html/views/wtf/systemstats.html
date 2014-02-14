@@ -1,8 +1,13 @@
+<div id="loading" data-why="sysfilters">
+	<span>Подождите, загружаемся</span>
+	<div id="annotation"></div>
+	<div id="progressbar"><div></div></div>
+</div>
 <div id="maincaption">{maincaption}</div>
 <div id="mainsupport">
 	<div class="graphfilter" id="time">
 		<label><input type="checkbox" class="all">Все (рядом)</label>
-		<form>
+		<form onsubmit="return false;">
 			<label><input type="checkbox" name="time">Часы (последние 48)</label>
 			<label><input type="checkbox" name="time">Дни (последние 60)</label>
 			<label><input type="checkbox" name="time">Месяцы</label>
@@ -10,16 +15,17 @@
 	</div>
 	<div class="graphfilter" id="region">
 		<label><input type="checkbox" class="all">Все</label>
-		<form>
+		<form onsubmit="return false;">
 			{regcheckboxes}
 		</form>
 	</div>
 	<div class="graphfilter" id="system">
 		<label><input type="checkbox" class="all">Все</label>
-		<form>
+		<form onsubmit="return false;">
 			{syscheckboxes}
 		</form>
 	</div>
+	<button name="draw" onclick="drawGraph();">Нарисовать</button>
 	{mainsupport}
 	<div class="clear"></div>
 </div>

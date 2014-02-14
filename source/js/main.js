@@ -60,84 +60,55 @@ $('#namesearch').keyup(function(key) {
 		else $(this).children('td').animate({'opacity': '0.3'}, 100);
 	});
 	
-/**
-*	
-*	Вывод графика активности по регионам
-*	
-**/
-
-	if ($('.graph').attr('class') != null && $('.sumregion').attr('class') != null) {
-		$('.graph').each(function () {
-			var w = parseInt($(this).width());
-			var h = parseInt($(this).height());
-			$(this).height(w);
-			$(this).width(500);
-			$(this).css( 'margin-bottom', h - w - 500 );
-		});
-		var actarr = {};
-		var max = 0;
-		var height = Math.floor( $('.graph').height() / 48 );
-		var leftpos = $('.graph').offset().left;
-		
-		$('.sumregion').each(function() {
-			var name = this.getAttribute('data-region');
-			var jumps = parseInt(this.getAttribute('data-jumps'));
-			actarr[name] = jumps;
-			
-			if (jumps > max) max = jumps
-			
-		});
-		
-		$('.sumregion').each(function() {
-			var jumps = parseInt(this.getAttribute('data-jumps'));
-			var width = Math.floor( jumps / max * $('.graph').width() ) + 1;
-			$(this).css({ 'height' : height, 'width' : width });
-			$(this).children('div').css( 'font-size', height - 1 );
-		});
-	}
+	/* Устанавливаем состояние всех чекбоксов в зависимости от GET`а */
+	$('.graphfilter input').each(function() {
+		this.checked = false;
+	});
 	
 	/* Фильтрация для графика: при клике на "все" выделять/снимать галки у всех детей */
-	$('input.all').click(function() {
-		$chk = this.checked;
-		$(this).parent().next().children().children('input').each(function() {this.checked = $chk;});
+	$('input.all').on('click', function() {
+		chk = this.checked;
+		$(this).parent().next().children().children('input').each(function() {
+			this.checked = chk;
+			if ($(this).attr('name') == 'region') toggleStars($(this).attr('data-id'), chk);
+		});
 	});
 	
-	/* Фильтрация систем по региону: прогрузка по AJAX списка */
-	$('input[name="region"]').click(function() {
+	/* Фильтрация систем по региону */
+	$('#region input[name="region"]').on('click', function() {
+		var regid = $(this).attr('data-id');
+		var condition = this.checked;
+		toggleStars(regid, condition);
+		if (!condition) {
+			checkStars(regid, condition);
+			$('#system [data-regid="' + regid + '"]').each(function() {this.checked = false;});
+		}
+/*	Составление строки из айдишников нужных регионов, осталось для фильтрации через AJAX */
+	});
+	
+	/* Выделение всех систем региона */
+	$('#system input[name="region"]').on('click', function() {
+		var regid = $(this).attr('data-regid');
+		var condition = this.checked;
+		checkStars(regid, condition);
+	});
+	
+	/* Прогрузка систем после загрузки страницы */
+	if ($('#loading').attr('data-why') == 'sysfilters') {
+		$('#shadow').show();
+		$('#loading').show();
+		$('#annotation').text('Загружаем системы из txt-файлов');
+		$('#progressbar div').css('width', '3%');
+		var regionset = '';
 		var r = '';
-		$('input[name="region"]:checked').each(function() {
-			r += ',' + $(this).attr('data-id');
+		$('#system input[name="region"]').each(function() {
+			var regID = $(this).attr('data-regid');
+			r += ',' + regID;
 		});
-		var regionset = escape(r.substr(1));
-		getSystemList(regionset);
-	});
-
-	function getSystemList(regions) {
-		$.ajax({
-			type: 'GET',
-			url: 'getsystems',
-			data: {'regions' : regions},
-			dataType: 'json',
-			success: function(data) {
-				var sysinputs = '<label><input type="checkbox" class="all">Все</label><form>';
-				for (sysid in data) {
-					var sysinfo = data[sysid];
-					var ss = parseFloat(sysinfo.security.toPrecision(1));
-					if (ss === 1.0) color = 'skyblue';
-					if (ss <= 0.9 && ss > 0.6) color = 'green';
-					if (ss <= 0.6 && ss > 0.4) color = 'yellow';
-					if (ss <= 0.4 && ss > 0.0) color = 'orange';
-					if (ss <= 0.0) color = 'red';
-					if (sysinfo['name'].search('/J\d{6}/') != -1) sysname = '&lt;WH&gt; ' + sysinfo['name'];
-					else sysname = sysinfo['name'];
-					sysinputs += '<label><input type="checkbox" name="system" data-id="' + sysid + '"><div style="width:28px; float: left; color:' + color + '">' + ss + '</div>' + sysname + '</label>';
-				}
-				sysinputs += '</form>';
-				$('#system').html(sysinputs);
-			}
-		});
+		regionset = escape(r.substr(1));
+		writeSystemList(regionset);
 	}
-	
+
 /* End of READY() */
 });
 
@@ -147,6 +118,7 @@ $('#namesearch').keyup(function(key) {
 *	Функция логина от uLogin
 *	
 **/
+
 function login(token){
 	// Отправляем AJAX-запрос к ним
 	$.getJSON("//ulogin.ru/token.php?host=" + encodeURIComponent(location.toString()) + "&token=" + token + "&callback=?",
@@ -159,3 +131,127 @@ function login(token){
 		}
 	});
 }
+
+/**
+*	
+*	Отбираем системы по регионам  записываем их в блок фильтра
+*	@param regions - Строка, в которой ID нужных регионов записаны через запятую
+*	
+**/
+	
+function writeSystemList(regions) {
+	var sysinputs = {};
+	$.ajax({
+		type: 'GET',
+		url: 'getsystems',
+		data: {'regions' : regions},
+		dataType: 'json',
+		success: function(data) {
+		
+			for (sysid in data) {
+				var sysinfo = data[sysid];
+				var ss = parseFloat(sysinfo.security.toPrecision(1));
+				if (ss === 1.0) color = 'skyblue';
+				if (ss <= 0.9 && ss > 0.6) color = 'green';
+				if (ss <= 0.6 && ss > 0.4) color = 'yellow';
+				if (ss <= 0.4 && ss > 0.0) color = 'orange';
+				if (ss <= 0.0) color = 'red';
+				if (sysinfo['name'].search('/J\d{6}/') != -1) sysname = '&lt;WH&gt; ' + sysinfo['name'];
+				else sysname = sysinfo['name'];
+				sysinputs[ sysinfo['regionID'] ] += '<label style="display: none;"><input type="checkbox" name="system" data-id="' + sysid + '" data-regid="' + sysinfo['regionID'] + '"><div style="width:28px; float: left; color:' + color + '">' + ss + '</div>' + sysname + '</label>';
+			}
+			
+			var width = 3;
+			$('#system input[name="region"]').each(function() {
+				var regID = $(this).attr('data-regid');
+				var regName = $(this).parent().text();
+				var inputs = sysinputs[regID].replace(/^undefined/, '');
+				$(this).parent().after(inputs);
+				$('#progressbar div').css('width', ++width + '%');
+				$('#annotation').text('Загружаем системы для региона ' + regName);
+			});
+		},
+		complete: function() {
+			$('#shadow').hide();
+			$('#loading').hide();
+		}
+		});
+}
+
+/* check/uncheck систем в зависимости от региона и состояния его чекбокса */
+function checkStars(regid, state) {
+	$('input[name="system"][data-regid="' + regid + '"]').each(function() {
+		this.checked = state;
+	});
+}
+
+/* show/hide систем в зависимости от региона и состояния его чекбокса */
+function toggleStars(regid, state) {
+	$('input[data-regid="' + regid + '"]').each(function() {
+		if (state) $(this).parent().show(); else $(this).parent().hide();
+		// this.checked = state;
+	});
+}
+
+/**
+*	
+*	Отрисовка графика по входным параметрам
+*	
+**/
+
+function drawGraph(time = 'daily', mode = 'system', region = 'Domain', star = 'Amarr') {			// На время разработки определю дефолтную отрисовку в Амарре
+	$('#shadow').show();
+	$('#loading').show();
+	$('#annotation').text('Рисуем график активности');
+	$('#progressbar div').css('width', '0');
+	$.ajax({
+		type: 'GET',
+		url: 'drawGraph',
+		data: {'time': time, 'mode': mode, 'region': region, 'star': star},
+		success: function(data) {
+			$('#maincontent').html(data);
+			formatGraph();
+			$('#shadow').hide();
+			$('#loading').hide();
+		}
+	});
+}
+
+	
+/**
+*	
+*	Вывод графика активности по регионам
+*	
+**/
+
+function formatGraph() {
+	$('.graph').each(function () {
+		var w = parseInt($(this).width());
+		var h = parseInt($(this).height());
+		$(this).height(w);
+		$(this).width(500);
+		$(this).css( 'margin-bottom', h - w - 500 );
+	});
+	var actarr = {};
+	var max = 0;
+	var height = Math.floor( $('.graph').height() / 48 );
+	var leftpos = $('.graph').offset().left;
+	
+	$('.sumregion').each(function() {
+		var name = this.getAttribute('data-region');
+		var jumps = parseInt(this.getAttribute('data-jumps'));
+		actarr[name] = jumps;
+		
+		if (jumps > max) max = jumps
+		
+	});
+	
+	$('.sumregion').each(function() {
+		var jumps = parseInt(this.getAttribute('data-jumps'));
+		var width = Math.floor( jumps / max * $('.graph').width() ) + 1;
+		$(this).css({ 'height' : height, 'width' : width });
+		$(this).children('div').css( 'font-size', height - 1 );
+	});
+}
+
+

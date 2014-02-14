@@ -27,6 +27,15 @@ a.nodeco {
 .clear {
   clear: both;
 }
+#shadow {
+	display: none;
+	height: 100%;
+	width: 100%;
+	position: fixed;
+	z-index: 100;
+	background-color: black;
+	opacity: 0.5;
+}
 
 /* Основная разметка, макет ================================================= */
 
@@ -106,6 +115,38 @@ a.nodeco {
 }
 #maincontent {
 	border: 2px dotted red;
+}
+
+/* Окошко "загружаемся" */
+#loading {
+	display: none;
+	height: 150px;
+	width: 300px;
+	position: fixed;
+	z-index: 101;
+	top: 100px;
+	left: 40%;
+	padding: 25px;
+	background-color: white;
+	text-align: center;
+}
+#annotation {
+	margin: 50px 0 5px 0;
+	font-size: 12px;
+}
+#progressbar {
+	height: 20px;
+	width: 100%;
+	background-color: #eee;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+#progressbar div {
+	height: 100%;
+	width: 0;
+	background-color: #A9CEF7;
 }
 
 /* Где-то здесь должен быть пол */
