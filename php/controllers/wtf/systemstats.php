@@ -119,13 +119,11 @@ class wtf_systemstats {
  		$q = db::query($str);
 		// var_dump($q);
 		$activity = array();
-		$maincontent = '';
+		$res = '[["date","' . $star . '"],';
 		
 		foreach ($q as $s) {
 			$activity[ $s['region'] ] = json_decode($s['activity']);
 		}
-		
-		$maincontent .= '<div style="position: absolute; z-index: 5;">' . $star . '</div><div class="graph">';
 		
 /* 		foreach ($activity as $region => $systemset) {
 			$sumregion = 0;
@@ -149,15 +147,15 @@ class wtf_systemstats {
 			foreach ($systemset as $system => $act) {
 				if ($system == $star) {
 					foreach ($act as $ts => $jumps) {
-						// Нужно по-другому скомпоновать строку: предусмотреть несколько систем в выборке, различные моды, временные отрезки...
-						$maincontent .= '<div class="sumregion" data-region="' . $system . '" data-jumps="' . $jumps . '"><div class="regname">' . date('d-m-Y H:i', $ts) . ' (' . $jumps . ')</div></div>';
+						$res .= '["' . date('d-m-Y H:i', $ts) . '",' . $jumps . '],';
 					}
 				}
 			}
 		}
 		
-		$maincontent .= '</div>';
-		echo $maincontent;
+		$res = substr($res, 0, -1) . ']';
+		
+		echo $res;
 	}
 
 }

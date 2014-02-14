@@ -213,14 +213,26 @@ function drawGraph(time, mode, region, star) {			// На время разраб
 		url: 'drawGraph',
 		data: {'time': time, 'mode': mode, 'region': region, 'star': star},
 		success: function(data) {
-			$('#maincontent').html(data);
-			formatGraph();
+			eval("array = " + data);
+			customChart(array);
 			$('#shadow').hide();
 			$('#loading').hide();
 		}
 	});
+
 }
 
+function customChart(array) {
+	var data = google.visualization.arrayToDataTable(array);
+	var options = {
+		title: 'Daily Jumps',
+		hAxis: {title: 'Date',  titleTextStyle: {color: '#333'}},
+		vAxis: {minValue: 0}
+	};
+
+	var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
+	chart.draw(data, options);
+}
 	
 /**
 *	
