@@ -158,7 +158,7 @@ function writeSystemList(regions) {
 				if (ss <= 0.0) color = 'red';
 				if (sysinfo['name'].search('/J\d{6}/') != -1) sysname = '&lt;WH&gt; ' + sysinfo['name'];
 				else sysname = sysinfo['name'];
-				sysinputs[ sysinfo['regionID'] ] += '<label style="display: none;"><input type="checkbox" name="system" data-id="' + sysid + '" data-regid="' + sysinfo['regionID'] + '"><div style="width:28px; float: left; color:' + color + '">' + ss + '</div>' + sysname + '</label>';
+				sysinputs[ sysinfo['regionID'] ] += '<label style="display: none;"><input type="checkbox" name="system" data-name="' + sysname + '" data-id="' + sysid + '" data-regid="' + sysinfo['regionID'] + '"><div style="width:28px; float: left; color:' + color + '">' + ss + '</div><span>' + sysname + '</span></label>';
 			}
 			
 			var width = 3;
@@ -202,8 +202,19 @@ function toggleStars(regid, state) {
 function drawGraph(time, mode, region, star) {			// На время разработки определю дефолтную отрисовку в Амарре
 	var time = 'daily';
 	var mode = 'system';
-	var region = 'Domain';
-	var star = 'Amarr';
+	var regions = {};
+	var stars = {};
+	var region = '';
+	var star = '';
+	var checked = $('input[name="system"]:checked');
+	checked.each(function() {
+		stars[ $(this).attr('data-name') ] = $(this).attr('data-name');
+		regions[ $('input[name="region"][data-id="' + $(this).attr('data-regid') + '"]').attr('data-name') ] = $('input[name="region"][data-id="' + $(this).attr('data-regid') + '"]').attr('data-name');
+	});
+	for (i in stars) { star += ',' + i; }
+	for (i in regions) { region += ',' + i; }
+	star = star.substr(1);
+	region = region.substr(1);
 	$('#shadow').show();
 	$('#loading').show();
 	$('#annotation').text('Рисуем график активности');

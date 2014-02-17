@@ -75,7 +75,7 @@ class wtf_systemstats {
 		foreach ($regions as $regID => $regName) {
 			if (preg_match('/\w-\w\d{5}/', $regName) !== 0) $newname = '&lt;WH&gt; ' . $regName;
 			else $newname = $regName;
-			$regCheckBoxes .= '<label><input type="checkbox" name="region" data-id="' . $regID . '">' . $newname . '</label>';
+			$regCheckBoxes .= '<label><input type="checkbox" name="region" data-name="' . $regName . '" data-id="' . $regID . '">' . $newname . '</label>';
 			$sysChecksPart[ $regID ] = '<label style="display: none;"><input type="checkbox" name="region" data-regid="' . $regID . '">' . $newname . '</label>';
 		}
 		
@@ -92,7 +92,7 @@ class wtf_systemstats {
 			if ($ss <= 0.0) $color = 'red';
 			if (preg_match('/J\d{6}/', $sysInfo['name']) !== 0) $sysName = '&lt;WH&gt; ' . $sysInfo['name'];
 			else $sysName = $sysInfo['name'];
-			// $sysChecksPart[ $thisSystemRegID ] .= '<label style="display: none;"><input type="checkbox" name="system" data-id="' . $sysID . '" data-regid="' . $sysInfo['regionID'] . '"><div style="width:28px; float: left; color:' . $color . '">' . number_format($ss, 1) . '</div>' . $sysName . '</label>';
+			// $sysChecksPart[ $thisSystemRegID ] .= '<label style="display: none;"><input type="checkbox" name="system" data-name="' . $sysName . '" data-id="' . $sysID . '" data-regid="' . $sysInfo['regionID'] . '"><div style="width:28px; float: left; color:' . $color . '">' . number_format($ss, 1) . '</div>' . $sysName . '</label>';
 		}
 		
 		foreach ($sysChecksPart as $part) $sysCheckBoxes .= $part;
@@ -112,14 +112,16 @@ class wtf_systemstats {
 		$GAMINAS['notemplate'] = TRUE;
 		$time = urldecode($_GET['time']);
 		$mode = urldecode($_GET['mode']);
-		$region = urldecode($_GET['region']);
-		$star = urldecode($_GET['star']);
+		$regions = urldecode($_GET['region']);
+		$regionArr = explode(',', $regions);
+		$regionQuery = implode("','", $regionArr);
+		$stars = urldecode($_GET['star']);
+		$systemArr = explode(',', $stars);
 		
-		$str = "SELECT SQL_CACHE * FROM `activity_$time` WHERE `region` = '$region'";
+		$str = "SELECT SQL_CACHE * FROM `activity_$time` WHERE `region` IN ('$regionQuery')";
  		$q = db::query($str);
 		// var_dump($q);
 		$activity = array();
-		$res = '[["date","' . $star . '"],';
 		
 		foreach ($q as $s) {
 			$activity[ $s['region'] ] = json_decode($s['activity']);
@@ -145,12 +147,20 @@ class wtf_systemstats {
 		
 		foreach ($activity as $region => $systemset) {
 			foreach ($systemset as $system => $act) {
-				if ($system == $star) {
+				if (array_search($system, $systemArr) !== FALSE) {
 					foreach ($act as $ts => $jumps) {
-						$res .= '["' . date('d-m-Y H:i', $ts) . '",' . $jumps . '],';
+						$arr[ date('d-m-Y H:i', $ts) ][ $system ] = $jumps;
+						$resHead[ $system ] = $system;
 					}
 				}
 			}
+		}
+		
+		$res = '[["date","' . implode('","', $resHead) . '"],';
+		
+		foreach ($arr as $time => $systems) {
+			$act = implode(',', $systems);
+			$res .= '["' . $time . '",' . $act . '],';
 		}
 		
 		$res = substr($res, 0, -1) . ']';
