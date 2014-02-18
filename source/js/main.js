@@ -150,7 +150,7 @@ function writeSystemList(regions) {
 		
 			for (sysid in data) {
 				var sysinfo = data[sysid];
-				var ss = parseFloat(sysinfo.security.toPrecision(1));
+				var ss = parseFloat(sysinfo.security.toFixed(1));
 				if (ss === 1.0) color = 'skyblue';
 				if (ss <= 0.9 && ss > 0.6) color = 'green';
 				if (ss <= 0.6 && ss > 0.4) color = 'yellow';
@@ -158,7 +158,7 @@ function writeSystemList(regions) {
 				if (ss <= 0.0) color = 'red';
 				if (sysinfo['name'].search('/J\d{6}/') != -1) sysname = '&lt;WH&gt; ' + sysinfo['name'];
 				else sysname = sysinfo['name'];
-				sysinputs[ sysinfo['regionID'] ] += '<label style="display: none;"><input type="checkbox" name="system" data-name="' + sysname + '" data-id="' + sysid + '" data-regid="' + sysinfo['regionID'] + '"><div style="width:28px; float: left; color:' + color + '">' + ss + '</div><span>' + sysname + '</span></label>';
+				sysinputs[ sysinfo['regionID'] ] += '<label style="display: none;"><input type="checkbox" name="system" data-name="' + sysname + '" data-id="' + sysid + '" data-regid="' + sysinfo['regionID'] + '"><div class="ss" style="color:' + color + '">' + ss + '</div><span>' + sysname + '</span></label>';
 			}
 			
 			var width = 3;
@@ -199,8 +199,8 @@ function toggleStars(regid, state) {
 *	
 **/
 
-function drawGraph(time, mode, region, star) {			// На время разработки определю дефолтную отрисовку в Амарре
-	var time = 'daily';
+function drawGraph(time, mode, region, star) {			// На время разработки определю дефолтную отрисовку системы по часам
+	var time = $('input[name="time"]:checked').attr('data-time');
 	var mode = 'system';
 	var regions = {};
 	var stars = {};
@@ -208,7 +208,7 @@ function drawGraph(time, mode, region, star) {			// На время разраб
 	var star = '';
 	var checked = $('input[name="system"]:checked');
 	checked.each(function() {
-		stars[ $(this).attr('data-name') ] = $(this).attr('data-name');
+		stars[ $(this).attr('data-name') + '_' + $(this).parent().children('.ss').text().replace('.', '') ] = $(this).attr('data-name');
 		regions[ $('input[name="region"][data-id="' + $(this).attr('data-regid') + '"]').attr('data-name') ] = $('input[name="region"][data-id="' + $(this).attr('data-regid') + '"]').attr('data-name');
 	});
 	for (i in stars) { star += ',' + i; }
@@ -237,48 +237,15 @@ function customChart(array) {
 	var data = google.visualization.arrayToDataTable(array);
 	var options = {
 		title: 'Daily Jumps',
-		hAxis: {title: 'Date',  titleTextStyle: {color: '#333'}},
-		vAxis: {minValue: 0}
+		height: 500,
+		chartArea: {left:80,top:50,width:"75%",height:"65%"},
+		hAxis: {title: 'Date',  titleTextStyle: {color: '#333'}, direction: -1},
+		vAxis: {title: 'Jumps', minValue: 0, gridlines: {color: '#ddd', count: 10}}
 	};
 
 	var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
 	chart.draw(data, options);
 }
-	
-/**
-*	
-*	Вывод графика активности по регионам
-*	
-**/
 
-function formatGraph() {
-	$('.graph').each(function () {
-		var w = parseInt($(this).width());
-		var h = parseInt($(this).height());
-		$(this).height(w);
-		$(this).width(500);
-		$(this).css( 'margin-bottom', h - w - 500 );
-	});
-	var actarr = {};
-	var max = 0;
-	var height = Math.floor( $('.graph').height() / 48 );
-	var leftpos = $('.graph').offset().left;
-	
-	$('.sumregion').each(function() {
-		var name = this.getAttribute('data-region');
-		var jumps = parseInt(this.getAttribute('data-jumps'));
-		actarr[name] = jumps;
-		
-		if (jumps > max) max = jumps
-		
-	});
-	
-	$('.sumregion').each(function() {
-		var jumps = parseInt(this.getAttribute('data-jumps'));
-		var width = Math.floor( jumps / max * $('.graph').width() ) + 1;
-		$(this).css({ 'height' : height, 'width' : width });
-		$(this).children('div').css( 'font-size', height - 1 );
-	});
-}
 
 

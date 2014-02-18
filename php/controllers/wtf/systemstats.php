@@ -65,7 +65,7 @@ class wtf_systemstats {
 		global $GAMINAS;
 		self::init();
 		
-		$maincaption = 'График активности в Амарре';
+		$maincaption = 'График активности в системах';
 		$mainsupport = '';
 		$maincontent = '';
 		
@@ -116,7 +116,8 @@ class wtf_systemstats {
 		$regionArr = explode(',', $regions);
 		$regionQuery = implode("','", $regionArr);
 		$stars = urldecode($_GET['star']);
-		$systemArr = explode(',', $stars);
+		$systemArr['starNames'] = explode(',', preg_replace('/\s*\_\-*\d+/', '', $stars));
+		$systemArr['secures'] = explode(',', preg_replace('/(\D|\A)(\-?\d)/', '$1$2.', preg_replace('/[a-zA-Z0-9\s\-]+_/', '', $stars)));
 		
 		$str = "SELECT SQL_CACHE * FROM `activity_$time` WHERE `region` IN ('$regionQuery')";
  		$q = db::query($str);
@@ -126,31 +127,19 @@ class wtf_systemstats {
 		foreach ($q as $s) {
 			$activity[ $s['region'] ] = json_decode($s['activity']);
 		}
-		
-/* 		foreach ($activity as $region => $systemset) {
-			$sumregion = 0;
-			
-			foreach ($systemset as $system => $act) {
-				$sumsystem = 0;
-
-				foreach ($act as $ts => $jumps) {
-					$sumsystem += (int)$jumps;
-				}
-				
-				$sumregion += $sumsystem;
-				
-			}
-			
-			// $maincontent .= '<div class="sumregion" data-region="' . $region . '" data-jumps="' . $sumregion . '"><div class="regname">' . $region . '(' . $sumregion . ')</div></div>';
-			
-		} */
-		
 		foreach ($activity as $region => $systemset) {
 			foreach ($systemset as $system => $act) {
-				if (array_search($system, $systemArr) !== FALSE) {
-					foreach ($act as $ts => $jumps) {
-						$arr[ date('d-m-Y H:i', $ts) ][ $system ] = $jumps;
-						$resHead[ $system ] = $system;
+				if (array_search($system, $systemArr['starNames']) !== FALSE) {
+					if ($time == 'daily') {
+						foreach ($act as $ts => $jumps) {
+							$arr[ date('d-m-Y H:i', $ts) ][ $system ] = $jumps;
+							$resHead[ $system ] = $system . '(' . number_format($systemArr['secures'][ array_search($system, $systemArr['starNames']) ], 1, '.', '') . ')';
+						}
+					} else if ($time == 'monthly') {
+						foreach ($act as $ts => $jumps) {
+							$arr[ $ts ][ $system ] = $jumps;
+							$resHead[ $system ] = $system . '(' . number_format($systemArr['secures'][ array_search($system, $systemArr['starNames']) ], 1, '.', '') . ')';
+						}
 					}
 				}
 			}
@@ -158,9 +147,9 @@ class wtf_systemstats {
 		
 		$res = '[["date","' . implode('","', $resHead) . '"],';
 		
-		foreach ($arr as $time => $systems) {
+		foreach ($arr as $date => $systems) {
 			$act = implode(',', $systems);
-			$res .= '["' . $time . '",' . $act . '],';
+			$res .= '["' . $date . '",' . $act . '],';
 		}
 		
 		$res = substr($res, 0, -1) . ']';

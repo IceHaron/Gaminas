@@ -12,9 +12,9 @@
 	<div class="graphfilter" id="time">
 		<label><input type="checkbox" class="all">Все (рядом)</label>
 		<form onsubmit="return false;">
-			<label><input type="checkbox" name="time">Часы (последние 48)</label>
-			<label><input type="checkbox" name="time">Дни (последние 60)</label>
-			<label><input type="checkbox" name="time">Месяцы</label>
+			<label><input type="radio" name="time" data-time="daily">Часы (последние 48)</label>
+			<label><input type="radio" name="time" data-time="monthly">Дни (последние 60)</label>
+			<label><input type="radio" name="time" data-time="lifetime">Месяцы</label>
 		</form>
 	</div>
 	<div class="graphfilter" id="region">
@@ -34,7 +34,7 @@
 	<div class="clear"></div>
 </div>
 <div id="maincontent">
-	<div id="chart_div" style="width: 100%; height: 500px;"></div>
+	<div id="chart_div" style="width: 100%;"></div>
 	{maincontent}
 	<div class="clear"></div>
 </div>
