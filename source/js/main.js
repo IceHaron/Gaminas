@@ -109,6 +109,11 @@ $('#namesearch').keyup(function(key) {
 		writeSystemList(regionset);
 	}
 
+	if (document.getElementById('strForChart') !== null) {
+		array = eval($('#strForChart').text());
+		customChart(array);
+	}
+	
 /* End of READY() */
 });
 

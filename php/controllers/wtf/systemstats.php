@@ -25,7 +25,7 @@ class wtf_systemstats {
 		global $GAMINAS;
 		self::$regions = json_decode(file_get_contents(root::$rootfolder . '/source/txt/regions.txt'), TRUE);
 		self::$stars = json_decode(file_get_contents(root::$rootfolder . '/source/txt/systems.txt'), TRUE);
-		$GAMINAS['backtrace'][] = 'taken region set and star set from files';
+		$GAMINAS['backtrace'][] = 'Took region set and star set from files';
 	}
 	
 /**
@@ -67,7 +67,7 @@ class wtf_systemstats {
 		
 		$maincaption = 'График активности в системах';
 		$mainsupport = '';
-		$maincontent = '';
+		$maincontent = '<div id="strForChart">' . self::getStringForGraph() . '</div>';
 		
 		$regions = self::$regions;
 		$regCheckBoxes = '';
@@ -110,14 +110,49 @@ class wtf_systemstats {
 		global $GAMINAS;
 		self::init();
 		$GAMINAS['notemplate'] = TRUE;
-		$time = urldecode($_GET['time']);
-		$mode = urldecode($_GET['mode']);
-		$regions = urldecode($_GET['region']);
-		$regionArr = explode(',', $regions);
-		$regionQuery = implode("','", $regionArr);
-		$stars = urldecode($_GET['star']);
-		$systemArr['starNames'] = explode(',', preg_replace('/\s*\_\-*\d+/', '', $stars));
-		$systemArr['secures'] = explode(',', preg_replace('/(\D|\A)(\-?\d)/', '$1$2.', preg_replace('/[a-zA-Z0-9\s\-]+_/', '', $stars)));
+		$time = isset($_GET['time']) ? urldecode($_GET['time']) : 'daily';
+		$mode = isset($_GET['mode']) ? urldecode($_GET['mode']) : 'system';
+		$regions = $_GET['region'] ? explode(',', urldecode($_GET['region'])) : 'default';
+		$stars = $_GET['star'] ? self::parseStarList(urldecode($_GET['star'])) : 'default';
+
+		$res = self::getStringForGraph($time, $mode, $regions, $stars);
+		
+		echo $res;
+	}
+	
+	private static function parseStarList($string) {
+		$array['starNames'] = explode(',', preg_replace('/\s*\_\-*\d+/', '', $string));
+		$array['secures'] = explode(',', preg_replace('/(\D|\A)(\-?\d)/', '$1$2.', preg_replace('/[a-zA-Z0-9\s\-]+_/', '', $string)));
+		
+		return $array;
+	}
+	
+	public static function getStringForGraph($time = 'daily', $mode = 'system', $regions = 'default', $stars = 'default') {
+		global $GAMINAS;
+		self::init();
+		if ($regions === 'default')
+			$regions = array(
+					'Domain'
+				, 'The Forge'
+				, 'Sinq Laison'
+				, 'Heimatar'
+			);
+		if ($stars === 'default')
+			$stars = array(
+				'starNames' => array(
+						'Amarr'
+					, 'Jita'
+					, 'Dodixie'
+					, 'Rens'
+				),
+				'secures' => array(
+						'1.'
+					, '0.9'
+					, '0.9'
+					, '0.9'
+				)
+			);
+		$regionQuery = implode("','", $regions);
 		
 		$str = "SELECT SQL_CACHE * FROM `activity_$time` WHERE `region` IN ('$regionQuery')";
  		$q = db::query($str);
@@ -129,16 +164,16 @@ class wtf_systemstats {
 		}
 		foreach ($activity as $region => $systemset) {
 			foreach ($systemset as $system => $act) {
-				if (array_search($system, $systemArr['starNames']) !== FALSE) {
+				if (array_search($system, $stars['starNames']) !== FALSE) {
 					if ($time == 'daily') {
 						foreach ($act as $ts => $jumps) {
 							$arr[ date('d-m-Y H:i', $ts) ][ $system ] = $jumps;
-							$resHead[ $system ] = $system . '(' . number_format($systemArr['secures'][ array_search($system, $systemArr['starNames']) ], 1, '.', '') . ')';
+							$resHead[ $system ] = $system . '(' . number_format($stars['secures'][ array_search($system, $stars['starNames']) ], 1, '.', '') . ')';
 						}
 					} else if ($time == 'monthly') {
 						foreach ($act as $ts => $jumps) {
 							$arr[ $ts ][ $system ] = $jumps;
-							$resHead[ $system ] = $system . '(' . number_format($systemArr['secures'][ array_search($system, $systemArr['starNames']) ], 1, '.', '') . ')';
+							$resHead[ $system ] = $system . '(' . number_format($stars['secures'][ array_search($system, $stars['starNames']) ], 1, '.', '') . ')';
 						}
 					}
 				}
@@ -154,7 +189,7 @@ class wtf_systemstats {
 		
 		$res = substr($res, 0, -1) . ']';
 		
-		echo $res;
+		return $res;
 	}
 
 }
