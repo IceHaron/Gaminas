@@ -167,7 +167,7 @@ class wtf_systemstats {
 				if (array_search($system, $stars['starNames']) !== FALSE) {
 					if ($time == 'daily') {
 						foreach ($act as $ts => $jumps) {
-							$arr[ date('d-m-Y H:i', $ts) ][ $system ] = $jumps;
+							$arr[ $ts ][ $system ] = $jumps;
 							$resHead[ $system ] = $system . '(' . number_format($stars['secures'][ array_search($system, $stars['starNames']) ], 1, '.', '') . ')';
 						}
 					} else if ($time == 'monthly') {
@@ -180,14 +180,14 @@ class wtf_systemstats {
 			}
 		}
 		
-		$res = '[["date","' . implode('","', $resHead) . '"],';
+		$res = '{"head":["' . implode('","', $resHead) . '"],"content":[';
 		
 		foreach ($arr as $date => $systems) {
 			$act = implode(',', $systems);
-			$res .= '["' . $date . '",' . $act . '],';
+			$res .= '[new Date(' . $date . '000),' . $act . '],';
 		}
 		
-		$res = substr($res, 0, -1) . ']';
+		$res = substr($res, 0, -1) . ']}';
 		
 		return $res;
 	}

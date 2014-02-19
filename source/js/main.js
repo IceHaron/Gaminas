@@ -110,7 +110,7 @@ $('#namesearch').keyup(function(key) {
 	}
 
 	if (document.getElementById('strForChart') !== null) {
-		array = eval($('#strForChart').text());
+		eval("array = " + $('#strForChart').text());
 		customChart(array);
 	}
 	
@@ -239,13 +239,20 @@ function drawGraph(time, mode, region, star) {			// На время разраб
 }
 
 function customChart(array) {
-	var data = google.visualization.arrayToDataTable(array);
+	
+	var data = new google.visualization.DataTable();
+	data.addColumn('datetime', 'Date');
+	tickset = new Array();
+	for (col in array.head) data.addColumn('number', array.head[col]);
+	for (row in array.content)
+		tickset = tickset.concat([array.content[row][0]]);
+	data.addRows(array.content);
 	var options = {
 		title: 'Daily Jumps',
 		height: 500,
 		chartArea: {left:80,top:50,width:"75%",height:"65%"},
-		hAxis: {title: 'Date',  titleTextStyle: {color: '#333'}, direction: -1},
-		vAxis: {title: 'Jumps', minValue: 0, gridlines: {color: '#ddd', count: 10}}
+		hAxis: {title: 'Date',  titleTextStyle: {color: '#333'}, gridlines: {color: '#ccc', count: 48}, ticks: tickset},
+		vAxis: {title: 'Jumps', minValue: 0, gridlines: {color: '#ccc', count: 10}, minorGridlines: {color: '#eee', count: 4}}
 	};
 
 	var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
