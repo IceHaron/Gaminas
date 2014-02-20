@@ -65,9 +65,14 @@ class wtf_systemstats {
 		global $GAMINAS;
 		self::init();
 		
+		$time = isset($_GET['time']) ? urldecode($_GET['time']) : 'daily';
+		$mode = isset($_GET['mode']) ? urldecode($_GET['mode']) : 'system';
+		$regions = $_GET['region'] ? explode(',', urldecode($_GET['region'])) : 'default';
+		$stars = $_GET['star'] ? self::parseStarList(urldecode($_GET['star'])) : 'default';
+		
 		$maincaption = 'График активности в системах';
-		$mainsupport = '';
-		$maincontent = '<div id="strForChart">' . self::getStringForGraph() . '</div>';
+		$mainsupport = '<label>Ссылка на график<input type="text" name="link" id="graphLink" value="' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] . '"></label>';
+		$maincontent = '<div id="strForChart">' . self::getStringForGraph($time, $mode, $regions, $stars) . '</div>';
 		
 		$regions = self::$regions;
 		$regCheckBoxes = '';

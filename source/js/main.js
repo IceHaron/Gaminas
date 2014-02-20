@@ -60,10 +60,6 @@ $('#namesearch').keyup(function(key) {
 		else $(this).children('td').animate({'opacity': '0.3'}, 100);
 	});
 	
-	/* Устанавливаем состояние всех чекбоксов в зависимости от GET`а */
-	$('.graphfilter input').each(function() {
-		this.checked = false;
-	});
 	
 	/* Фильтрация для графика: при клике на "все" выделять/снимать галки у всех детей */
 	$('input.all').on('click', function() {
@@ -113,6 +109,10 @@ $('#namesearch').keyup(function(key) {
 		eval("array = " + $('#strForChart').text());
 		customChart(array, 'daily');
 	}
+	
+	$('#graphLink').click(function() {
+		this.select();
+	});
 	
 /* End of READY() */
 });
@@ -175,6 +175,30 @@ function writeSystemList(regions) {
 				$('#progressbar div').css('width', ++width + '%');
 				$('#annotation').text('Загружаем системы для региона ' + regName);
 			});
+			
+			/* Устанавливаем состояние всех чекбоксов в зависимости от GET`а */
+			var get = unescape(window.location.search.substring(1)).replace('+', ' ').split('&');
+			var query = {};
+			for (i in get) {
+				elem = get[i].split('=');
+				query[ elem[0] ] = elem[1].replace(/\_\d+/g, '').split(',');
+			}
+			$('.graphfilter input').each(function() {
+				this.checked = false;
+				if ($(this).attr('name') !== undefined) name = $(this).attr('name').replace('system', 'star');
+				if (query.hasOwnProperty(name)) {
+					for (i in query[ name ]) {
+						value = query[ name ][i];
+						if ($(this).attr('data-name') == value || $(this).attr('data-time') == value) {
+							if ($(this).attr('name') == 'region') {
+								regid = $(this).attr('data-id');
+								$('#system input[data-regid="' + regid + '"]').parent().show();
+							}
+							this.checked = true;
+						}
+					}
+				}
+			});
 		},
 		complete: function() {
 			$('#shadow').hide();
@@ -205,12 +229,13 @@ function toggleStars(regid, state) {
 **/
 
 function drawGraph(time, mode, region, star) {			// На время разработки определю дефолтную отрисовку системы по часам
-	var time = $('input[name="time"]:checked').attr('data-time');
+	var time = $('input[name="time"]:checked').attr('data-time') ? $('input[name="time"]:checked').attr('data-time') : 'daily';
 	var mode = 'system';
 	var regions = {};
 	var stars = {};
 	var region = '';
 	var star = '';
+	var link = $('#graphLink').val().replace(/\?.+/,'');
 	var checked = $('input[name="system"]:checked');
 	checked.each(function() {
 		stars[ $(this).attr('data-name') + '_' + $(this).parent().children('.ss').text().replace('.', '') ] = $(this).attr('data-name');
@@ -231,6 +256,8 @@ function drawGraph(time, mode, region, star) {			// На время разраб
 		success: function(data) {
 			eval("array = " + data);
 			customChart(array, time);
+			link += '?time=' + time + '&mode=' + mode + '&region=' + region + '&star=' + star;
+			$('#graphLink').val(link);
 			$('#shadow').hide();
 			$('#loading').hide();
 		}

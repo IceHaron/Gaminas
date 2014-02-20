@@ -160,24 +160,26 @@ $GAMINAS = array(		 																														// Глобальная пер
 	, 'backtrace' => array()																											// Стандартный бэктрейс
 	, 'rootfolder' => isset($_SERVER['HOME']) ? $_SERVER['HOME'].'/gaminas' : $_SERVER['DOCUMENT_ROOT']
 	);
-	
-/////////////////////////////// Делаем блок TODO, надо бы это запихнуть в какой-нибудь отдельный файл
-
-$file = fopen('source/txt/TODO.txt', 'r');																									// Разбираем TODO.txt
-$c = 0;
-while ($todostring = fgets($file)) {
-	$todoarr = explode('--', $todostring);
-	$GAMINAS['todo'][$c]['class'] = trim($todoarr[0]);
-	$GAMINAS['todo'][$c]['text'] = trim($todoarr[1]);
-	$GAMINAS['todo'][$c]['state'] = trim($todoarr[2]);
-	$c++;
-}
 
 session_start();																																// Стартуем сессию
 INCLUDE_ONCE('php/firephp/fb.php');																							// Подключаем FirePHP
 ob_start();
 // fb($_SERVER);
 root::init();																																		// Инициализируем коренной класс
+	
+/////////////////////////////// Делаем блок TODO, надо бы это запихнуть в какой-нибудь отдельный файл
+
+if ($GAMINAS['username'] == 'Ice_Haron') {
+	$file = fopen('source/txt/TODO.txt', 'r');																									// Разбираем TODO.txt
+	$c = 0;
+	while ($todostring = fgets($file)) {
+		$todoarr = explode('--', $todostring);
+		$GAMINAS['todo'][$c]['class'] = trim($todoarr[0]);
+		$GAMINAS['todo'][$c]['text'] = trim($todoarr[1]);
+		$GAMINAS['todo'][$c]['state'] = trim($todoarr[2]);
+		$c++;
+	}
+}
 
 if (!$GAMINAS['isfile']) {																											// Если обращаемся не непосредственно к файлу
 
