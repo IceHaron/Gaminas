@@ -181,6 +181,7 @@ class wtf_systemstats {
 		}
 		
 		$res = '{"head":["' . implode('","', $resHead) . '"],"content":[';
+		ksort($arr);
 		
 		foreach ($arr as $date => $systems) {
 			$act = implode(',', $systems);

@@ -111,7 +111,7 @@ $('#namesearch').keyup(function(key) {
 
 	if (document.getElementById('strForChart') !== null) {
 		eval("array = " + $('#strForChart').text());
-		customChart(array);
+		customChart(array, 'daily');
 	}
 	
 /* End of READY() */
@@ -230,7 +230,7 @@ function drawGraph(time, mode, region, star) {			// На время разраб
 		data: {'time': time, 'mode': mode, 'region': region, 'star': star},
 		success: function(data) {
 			eval("array = " + data);
-			customChart(array);
+			customChart(array, time);
 			$('#shadow').hide();
 			$('#loading').hide();
 		}
@@ -238,7 +238,7 @@ function drawGraph(time, mode, region, star) {			// На время разраб
 
 }
 
-function customChart(array) {
+function customChart(array, time) {
 	var tickset = new Array();
 	var i = 0;
 	var data = new google.visualization.DataTable();
@@ -248,7 +248,7 @@ function customChart(array) {
 	for (row in array.content) {
 		if (i % 2 == 0) {
 			var date = array.content[row][0];
-			var tickName = myDate.morph(date, 'daily');
+			var tickName = myDate.morph(date, time);
 			var tick = {v: date, f: tickName};
 			tickset = tickset.concat(tick);
 		}
@@ -256,10 +256,10 @@ function customChart(array) {
 	}
 	data.addRows(array.content);
 	var options = {
-		title: 'Daily Jumps',
+		title: time + ' Jumps',
 		height: 500,
 		chartArea: {left:80,top:50,width:"75%",height:"65%"},
-		hAxis: {title: 'Date',  titleTextStyle: {color: '#333'}, gridlines: {color: '#ccc', count: 48}, ticks: tickset},
+		hAxis: {title: 'Date',  titleTextStyle: {color: '#333'}, ticks: tickset},
 		vAxis: {title: 'Jumps', minValue: 0, gridlines: {color: '#ccc', count: 10}, minorGridlines: {color: '#eee', count: 4}}
 	};
 
