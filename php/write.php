@@ -124,9 +124,9 @@ foreach ($regions as $id => $region) {
 	// $query_arr[] = "INSERT INTO `activity_monthly` SET `activity` = '$monthlywrite', `region` = '$region';";
 }
 
-echo '<pre>';
-var_dump($query_arr);
-echo '</pre>';
+// echo '<pre>';
+// var_dump($query_arr);
+// echo '</pre>';
 
 // echo 'Now: ' . $arr['currentTime'] . '(' . strtotime($arr['currentTime']) . ')<br/>
 			// Cache time: ' . $arr['cachedUntil'] . '(' . strtotime($arr['cachedUntil']) . ')';
