@@ -239,13 +239,21 @@ function drawGraph(time, mode, region, star) {			// На время разраб
 }
 
 function customChart(array) {
-	
+	var tickset = new Array();
+	var i = 0;
 	var data = new google.visualization.DataTable();
 	data.addColumn('datetime', 'Date');
-	tickset = new Array();
+	
 	for (col in array.head) data.addColumn('number', array.head[col]);
-	for (row in array.content)
-		tickset = tickset.concat([array.content[row][0]]);
+	for (row in array.content) {
+		if (i % 2 == 0) {
+			var date = array.content[row][0];
+			var tickName = myDate.morph(date, 'daily');
+			var tick = {v: date, f: tickName};
+			tickset = tickset.concat(tick);
+		}
+		i++;
+	}
 	data.addRows(array.content);
 	var options = {
 		title: 'Daily Jumps',
@@ -259,5 +267,25 @@ function customChart(array) {
 	chart.draw(data, options);
 }
 
-
-
+var myDate = {
+	morph: function(date, mode) {
+		var day = this.zerofill(date.getDate().toString(), 2);
+		var mon = this.zerofill(parseInt(date.getMonth().toString()) + 1, 2);
+		var year = date.getFullYear().toString();
+		var hour = this.zerofill(date.getHours().toString(), 2);
+		var min = this.zerofill(date.getMinutes().toString(), 2);
+		var res = '';
+		if (mode == 'daily') res = day + '-' + mon + ' ' + hour + ':' + min;
+		if (mode == 'monthly') res = day + '-' + mon + '-' + year;
+		return res;
+	},
+	zerofill: function(num, len) {
+		var numLen = (num+'').length;
+		var outStr = '';
+		for (i = 0; i < len-numLen; i++) {
+			outStr += '0';
+		}
+		outStr += num;
+		return outStr;
+	}
+};
