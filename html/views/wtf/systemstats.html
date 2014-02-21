@@ -10,7 +10,6 @@
 <div id="maincaption">{maincaption}</div>
 <div id="mainsupport">
 	<div class="graphfilter" id="time">
-		<label><input type="checkbox" class="all">Все (рядом)</label>
 		<form onsubmit="return false;">
 			<label><input type="radio" name="time" data-time="daily" checked>Часы (последние 48)</label>
 			<label><input type="radio" name="time" data-time="monthly">Дни (последние 60)</label>
@@ -29,6 +28,8 @@
 			{syscheckboxes}
 		</form>
 	</div>
+	<input type="text" id="systemSearch" placeholder="Найти систему">
+	<div id="systemSearchVariants"><div class="ssVariant"><span id="ssVariantsSS">1.0</span> <span id="ssVariantsStar">Amarr</span> <span id="ssVariantsReg">Domain</span></div></div>
 	<button name="draw" onclick="drawGraph();">Нарисовать</button>
 	{mainsupport}
 	<div class="clear"></div>

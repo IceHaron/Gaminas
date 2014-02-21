@@ -61,7 +61,7 @@ $('#namesearch').keyup(function(key) {
 	});
 	
 	
-	/* Фильтрация для графика: при клике на "все" выделять/снимать галки у всех детей */
+	/* Фильтрация для графика: при клике на "все" ставить/снимать галки у всех детей */
 	$('input.all').on('click', function() {
 		chk = this.checked;
 		$(this).parent().next().children().children('input').each(function() {
@@ -97,19 +97,23 @@ $('#namesearch').keyup(function(key) {
 		$('#progressbar div').css('width', '3%');
 		var regionset = '';
 		var r = '';
-		$('#system input[name="region"]').each(function() {
+		
+		$('#system input[name="region"]').each(function() {													// Собираем список регионов в строку
 			var regID = $(this).attr('data-regid');
 			r += ',' + regID;
 		});
-		regionset = escape(r.substr(1));
-		writeSystemList(regionset);
+		
+		regionset = escape(r.substr(1));																						// Убираем ненужную запятую в начале строки
+		writeSystemList(regionset);																									// Пишем в документ чекбоксы систем выбранных регионов
 	}
 
+	/* Получаем из блока JSON-строку чтобы нарисовать по ней график */
 	if (document.getElementById('strForChart') !== null) {
 		eval("array = " + $('#strForChart').text());
 		customChart(array, 'daily');
 	}
 	
+	/* При клике в поле "Ссылка на график" выделяем весь текст в нем */
 	$('#graphLink').click(function() {
 		this.select();
 	});
@@ -141,11 +145,13 @@ function login(token){
 *	
 *	Отбираем системы по регионам  записываем их в блок фильтра
 *	@param regions - Строка, в которой ID нужных регионов записаны через запятую
+*	@return void
 *	
 **/
 	
 function writeSystemList(regions) {
 	var sysinputs = {};
+	/* Первым делом получаем список систем для указанных в параметре регионов */
 	$.ajax({
 		type: 'GET',
 		url: 'getsystems',
@@ -153,26 +159,33 @@ function writeSystemList(regions) {
 		dataType: 'json',
 		success: function(data) {
 		
+		// Склеиваем чекбоксы
 			for (sysid in data) {
 				var sysinfo = data[sysid];
-				var ss = parseFloat(sysinfo.security.toFixed(1));
+				var ss = parseFloat(sysinfo.security.toFixed(1));												// Нам нужен СС системы чтобы раскрасить его в нужный цвет
+				
 				if (ss === 1.0) color = 'skyblue';
 				if (ss <= 0.9 && ss > 0.6) color = 'green';
 				if (ss <= 0.6 && ss > 0.4) color = 'yellow';
 				if (ss <= 0.4 && ss > 0.0) color = 'orange';
 				if (ss <= 0.0) color = 'red';
+				
+				// Моя придумка: помечаем регионы ВХ
 				if (sysinfo['name'].search('/J\d{6}/') != -1) sysname = '&lt;WH&gt; ' + sysinfo['name'];
 				else sysname = sysinfo['name'];
+				
+				// Формируем массив HTML-строк, по строке на каждый регион из входящего списка
 				sysinputs[ sysinfo['regionID'] ] += '<label style="display: none;"><input type="checkbox" name="system" data-name="' + sysname + '" data-id="' + sysid + '" data-regid="' + sysinfo['regionID'] + '"><div class="ss" style="color:' + color + '">' + ss + '</div><span>' + sysname + '</span></label>';
 			}
 			
+			// Записываем системы для каждого региона
 			var width = 3;
 			$('#system input[name="region"]').each(function() {
 				var regID = $(this).attr('data-regid');
 				var regName = $(this).parent().text();
 				var inputs = sysinputs[regID].replace(/^undefined/, '');
 				$(this).parent().after(inputs);
-				$('#progressbar div').css('width', ++width + '%');
+				$('#progressbar div').css('width', ++width + '%');											// Прибавляем прогрессбар
 				$('#annotation').text('Загружаем системы для региона ' + regName);
 			});
 			
@@ -180,29 +193,43 @@ function writeSystemList(regions) {
 			var get = unescape(window.location.search.substring(1)).replace('+', ' ').split('&');
 			if (get[0] != '') {
 				var query = {};
+				
 				for (i in get) {
 					elem = get[i].split('=');
-					query[ elem[0] ] = elem[1].replace(/\_\d+/g, '').split(',');
+					query[ elem[0] ] = elem[1].replace(/\_\d+/g, '').split(',');					// Разбираем GET и превращаем его в массив
 				}
+				
 				$('.graphfilter input').each(function() {
-					this.checked = false;
+					this.checked = false;																									// Очищаем выделение
+					
 					if ($(this).attr('name') !== undefined) name = $(this).attr('name').replace('system', 'star');
-					if (query.hasOwnProperty(name)) {
+					
+					if (query.hasOwnProperty(name)) {																			// Отсеиваем чекбоксы, упомянутые в запросе
+					
 						for (i in query[ name ]) {
 							value = query[ name ][i];
+							
 							if ($(this).attr('data-name') == value || $(this).attr('data-time') == value) {
+							
 								if ($(this).attr('name') == 'region') {
 									regid = $(this).attr('data-id');
+									// Все системы упомянутых регионов нужно показать
 									$('#system input[data-regid="' + regid + '"]').parent().show();
 								}
-								this.checked = true;
+								
+								this.checked = true;																						// Расставляем нужные галочки
 							}
+							
 						}
+						
 					}
+					
 				});
+				
 			}
+			
 		},
-		complete: function() {
+		complete: function() {																											// После записи систем и расстановки галочек, закрываем прогрессбар
 			$('#shadow').hide();
 			$('#loading').hide();
 		}
@@ -227,10 +254,15 @@ function toggleStars(regid, state) {
 /**
 *	
 *	Отрисовка графика по входным параметрам
+* @param time - тип графика часовой/дневной/месячный
+* @param mode - тип графика система/регион
+* @param region - регионы
+* @param star - системы
+*	@return void
 *	
 **/
 
-function drawGraph(time, mode, region, star) {			// На время разработки определю дефолтную отрисовку системы по часам
+function drawGraph(time, mode, region, star) {			// На время разработки определю дефолтную отрисовку систем, регионы появятся много позже
 	var time = $('input[name="time"]:checked').attr('data-time') ? $('input[name="time"]:checked').attr('data-time') : 'daily';
 	var mode = 'system';
 	var regions = {};
@@ -239,25 +271,32 @@ function drawGraph(time, mode, region, star) {			// На время разраб
 	var star = '';
 	var link = $('#graphLink').val().replace(/\?.+/,'');
 	var checked = $('input[name="system"]:checked');
+	
+	// В зависимости от расставленных галочек, составляем массивы выбранных систем и регионов Ключи - видимое название, Значения - фактическое
 	checked.each(function() {
 		stars[ $(this).attr('data-name') + '_' + $(this).parent().children('.ss').text().replace('.', '') ] = $(this).attr('data-name');
 		regions[ $('input[name="region"][data-id="' + $(this).attr('data-regid') + '"]').attr('data-name') ] = $('input[name="region"][data-id="' + $(this).attr('data-regid') + '"]').attr('data-name');
 	});
+	
+	// Составляем строки видимых названий регионов и систем
 	for (i in stars) { star += ',' + i; }
 	for (i in regions) { region += ',' + i; }
 	star = star.substr(1);
 	region = region.substr(1);
-	$('#shadow').show();
+	
+	$('#shadow').show();																													// Показываем прогресс-бар
 	$('#loading').show();
 	$('#annotation').text('Рисуем график активности');
 	$('#progressbar div').css('width', '0');
-	$.ajax({
+	
+	$.ajax({																																			// Получаем из пхп форматированную строку для графика
 		type: 'GET',
 		url: 'drawGraph',
 		data: {'time': time, 'mode': mode, 'region': region, 'star': star},
 		success: function(data) {
-			eval("array = " + data);
-			customChart(array, time);
+			eval("array = " + data);																									// Единственный рабочий способ полученную строку без ошибок перевести в массив
+			customChart(array, time);																									// Рисуем график
+			// Составляем и записываем в нужный блок ссылку на график, закрываем прогрессбар
 			link += '?time=' + time + '&mode=' + mode + '&region=' + region + '&star=' + star;
 			$('#graphLink').val(link);
 			$('#shadow').hide();
@@ -267,15 +306,25 @@ function drawGraph(time, mode, region, star) {			// На время разраб
 
 }
 
+/**
+*	
+*	Отрисовка графика по входным параметрам
+* @param array - массив данных, по которым график рисуется
+* @param time - тип графика часовой/дневной/месячный, указывает формат даты и заголовок графика
+*	@return void
+*	
+**/
+
 function customChart(array, time) {
 	var tickset = new Array();
 	var i = 0;
-	var data = new google.visualization.DataTable();
-	data.addColumn('datetime', 'Date');
+	var data = new google.visualization.DataTable();															// Инициализируем график
+	data.addColumn('datetime', 'Date');																						// Добавляем заголовок для оси Ох и тип данных
 	
-	for (col in array.head) data.addColumn('number', array.head[col]);
-	for (row in array.content) {
-		if (i % 2 == 0) {
+	for (col in array.head) data.addColumn('number', array.head[col]);						// Добавляем видимые названия систем и типы данных для них
+	
+	for (row in array.content) {																									// Составляем массив вертикальных "рисочек"
+		if (i % 2 == 0) {																														// Для данного кода вертикальные линии отображаются для каждого второго часа
 			var date = array.content[row][0];
 			var tickName = myDate.morph(date, time);
 			var tick = {v: date, f: tickName};
@@ -283,7 +332,10 @@ function customChart(array, time) {
 		}
 		i++;
 	}
-	data.addRows(array.content);
+	
+	data.addRows(array.content);																									// Заполняем массив данными
+	
+	// Выставляем опции для графика в соответствии с гугловой таблицей опций: https://google-developers.appspot.com/chart/interactive/docs/gallery/areachart#Configuration_Options
 	var options = {
 		title: time + ' Jumps',
 		height: 500,
@@ -292,11 +344,29 @@ function customChart(array, time) {
 		vAxis: {title: 'Jumps', minValue: 0, gridlines: {color: '#ccc', count: 10}, minorGridlines: {color: '#eee', count: 4}}
 	};
 
+	// Создаем объект
 	var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
+	// Рисуем график
 	chart.draw(data, options);
 }
 
+/**
+*	
+*	Объект для работы с датой
+*	
+**/
+
 var myDate = {
+
+/**
+*	
+*	Переформатирование даты в строку
+* @param date - дата в своем формате
+* @param mode - мод часовой/дневной/месячный, указывает формат даты
+*	@return res - дата в формате строки
+*	
+**/
+
 	morph: function(date, mode) {
 		var day = this.zerofill(date.getDate().toString(), 2);
 		var mon = this.zerofill(parseInt(date.getMonth().toString()) + 1, 2);
@@ -306,8 +376,19 @@ var myDate = {
 		var res = '';
 		if (mode == 'daily') res = day + '-' + mon + ' ' + hour + ':' + min;
 		if (mode == 'monthly') res = day + '-' + mon + '-' + year;
+		if (hour == '13') res += ' [DT]';
 		return res;
 	},
+	
+/**
+*	
+*	Дополнение числа нулями с левой стороны
+* @param num - число
+* @param len - нужная длина строки
+*	@return outStr - число в строчном формате, дополненное слева нулями до нужной длины строки
+*	
+**/
+
 	zerofill: function(num, len) {
 		var numLen = (num+'').length;
 		var outStr = '';
@@ -317,4 +398,5 @@ var myDate = {
 		outStr += num;
 		return outStr;
 	}
+	
 };

@@ -19,3 +19,14 @@
 	float: left;
 }
 #strForChart { display: none; }
+#systemSearch {
+	width: 200px;
+}
+#systemSearchVariants {
+	min-width: 200px;
+	min-height: 30px;
+	left: 825px;
+	position: absolute;
+	background-color: white;
+	font-size: 12px;
+}
