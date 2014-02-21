@@ -178,27 +178,29 @@ function writeSystemList(regions) {
 			
 			/* Устанавливаем состояние всех чекбоксов в зависимости от GET`а */
 			var get = unescape(window.location.search.substring(1)).replace('+', ' ').split('&');
-			var query = {};
-			for (i in get) {
-				elem = get[i].split('=');
-				query[ elem[0] ] = elem[1].replace(/\_\d+/g, '').split(',');
-			}
-			$('.graphfilter input').each(function() {
-				this.checked = false;
-				if ($(this).attr('name') !== undefined) name = $(this).attr('name').replace('system', 'star');
-				if (query.hasOwnProperty(name)) {
-					for (i in query[ name ]) {
-						value = query[ name ][i];
-						if ($(this).attr('data-name') == value || $(this).attr('data-time') == value) {
-							if ($(this).attr('name') == 'region') {
-								regid = $(this).attr('data-id');
-								$('#system input[data-regid="' + regid + '"]').parent().show();
+			if (get[0] != '') {
+				var query = {};
+				for (i in get) {
+					elem = get[i].split('=');
+					query[ elem[0] ] = elem[1].replace(/\_\d+/g, '').split(',');
+				}
+				$('.graphfilter input').each(function() {
+					this.checked = false;
+					if ($(this).attr('name') !== undefined) name = $(this).attr('name').replace('system', 'star');
+					if (query.hasOwnProperty(name)) {
+						for (i in query[ name ]) {
+							value = query[ name ][i];
+							if ($(this).attr('data-name') == value || $(this).attr('data-time') == value) {
+								if ($(this).attr('name') == 'region') {
+									regid = $(this).attr('data-id');
+									$('#system input[data-regid="' + regid + '"]').parent().show();
+								}
+								this.checked = true;
 							}
-							this.checked = true;
 						}
 					}
-				}
-			});
+				});
+			}
 		},
 		complete: function() {
 			$('#shadow').hide();

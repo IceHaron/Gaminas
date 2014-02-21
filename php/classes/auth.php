@@ -34,7 +34,6 @@ class auth {
 		}
 		
 // Конец логинизации через uLogin, теперь все по хардкору
-		
 		if (isset($_SESSION['uid']) && $_SESSION['uid'] !== '' && $_SESSION['uid'] !== NULL) {
 			// Проверяем, может, в сессии лежит айдишник? это значит, что мы уже авторизованы
 			$GAMINAS['uid'] = $_SESSION['uid'];
@@ -89,9 +88,10 @@ class auth {
 * Все просто: подчищаем сессию, убиваем куку, редиректим пока что на главную, надо будет сделать редирект обратно
 *	
 */
-	public function logoff() {
+	public static function logoff() {
 		unset ($_SESSION['uid']);
-		setcookie('uid', '', time());
+		setcookie('uid', '', time(), '/');																			// Пример удаления печенки: имя, пустое значение, нынешний таймстамп и обязательно совпадающий с существующей кукой путь
+		unset ($_COOKIE['uid']);
 		echo '<meta http-equiv="refresh" content="0;URL=http://gaminas.ice" />';
 	}
 }

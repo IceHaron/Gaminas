@@ -69,7 +69,8 @@
           <a href="/library"><div class="topmenunode">Библиотека</div></a>
           <a href="/trade"><div class="topmenunode">Обмен</div></a>
           <a href="/news"><div class="topmenunode">Новости</div></a>
-          <a href="/contact"><div class="topmenunode">Контакт</div></a>
+          <a href="/contact"><div class="topmenunode">Контакты</div></a>
+          <a href="/wtf/systemstats/show"><div class="topmenunode">Статистика</div></a>
           <a href="/wtf/four/level/addr"><div class="topmenunode" style="float:right;">WTF</div></a>
 					<div class="clear"></div>
       </div>
@@ -94,6 +95,7 @@
 				<? } ?>
 				<div class="clear"></div>
 			</div>
+			<? if (isset($GAMINAS['todo'])) { ?>
 			<table id="todo" cellpadding="3">
 				<thead>
 					<tr>
@@ -104,18 +106,19 @@
 				</thead>
 				<tbody>
 					<?foreach ($GAMINAS['todo'] as $k => $todoarr) {?>
-						<tr class="todotr">
-							<td class="<?=$todoarr['state'].' '.$todoarr['class']?> left">
-								<?=$todoarr['class']?>
-							</td>
-							<td class="<?=$todoarr['state'].' '.$todoarr['class']?> center">	<!-- Тут класс берется из нулевого элемента для придания правильной окраски блока -->
-								<?=$todoarr['text']?>
-							</td>
-							<td class="<?=$todoarr['state']?>-right">
-								<?=$todoarr['state']?>
-							</td>
-						</tr>
-					<? } ?>
+							<tr class="todotr">
+								<td class="<?=$todoarr['state'].' '.$todoarr['class']?> left">
+									<?=$todoarr['class']?>
+								</td>
+								<td class="<?=$todoarr['state'].' '.$todoarr['class']?> center">	<!-- Тут класс берется из нулевого элемента для придания правильной окраски блока -->
+									<?=$todoarr['text']?>
+								</td>
+								<td class="<?=$todoarr['state']?>-right">
+									<?=$todoarr['state']?>
+								</td>
+							</tr>
+					<?}
+					} ?>
 				</tbody>
 			</table>
 			&copy;CCP hf. All rights reserved. Used with permission.

@@ -169,7 +169,7 @@ root::init();																																		// Инициализируем �
 	
 /////////////////////////////// Делаем блок TODO, надо бы это запихнуть в какой-нибудь отдельный файл
 
-if ($GAMINAS['username'] == 'Ice_Haron') {
+if (isset($GAMINAS['username']) && $GAMINAS['username'] == 'Ice_Haron') {
 	$file = fopen('source/txt/TODO.txt', 'r');																									// Разбираем TODO.txt
 	$c = 0;
 	while ($todostring = fgets($file)) {
@@ -186,7 +186,8 @@ if (!$GAMINAS['isfile']) {																											// Если обращае�
 	$GAMINAS['source'] = 'http://' . root::$path . '/source';											// Папка, откуда берется весь хлам
 	require_once('php/controllers/index.php');																		// Подключаем контроллер, хорошо бы сделать подгрузку контроллера в зависимости от адреса или что-нибудь типа того
 
-	if ($GAMINAS['folder'] != '') {																								// Если же мы зрим не в корень, то надо подключить контроллер и вид
+	if (isset($GAMINAS['action']) && $GAMINAS['action'] == 'logoff') auth::logoff();
+	else if ($GAMINAS['folder'] != '') {																								// Если же мы зрим не в корень, то надо подключить контроллер и вид
 		$controller = $GAMINAS['folder'] . '_' . $GAMINAS['controller'];
 		INCLUDE_ONCE('php/controllers/' . $GAMINAS['folder'] . '/' . $GAMINAS['controller'] . '.php');
 		$controller::$GAMINAS['action']($GAMINAS['params']);
