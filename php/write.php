@@ -98,6 +98,7 @@ foreach ($skeleton as $region => $systems) {
 	}
 	
 }
+unset($dailytable, $monthlytable);
 
 // Вот и пришло время перебрать все, что нам пришло в XML
 foreach($arr['result']['rowset']['row'] as $system) {
