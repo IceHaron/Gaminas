@@ -32,9 +32,12 @@ while ($row = mysqli_fetch_assoc($q)) {
 	$monthlytable[ $row['region'] ] = $row['activity'];
 }
 
+unset($q);																																				// Уничтожаем переменную, надеюсь, это исправит ошибку
+
 // Тырим XML и превращаем его в JSON
 $xml = new SimpleXMLElement('https://api.eveonline.com/map/Jumps.xml.aspx',0,TRUE);
 $arr = json_decode(json_encode($xml), TRUE);
+unset($xml);																																			// Уничтожаем переменную, надеюсь, это исправит ошибку
 // Забираем инфу о системах и регионах. записанную в файлы
 $stars = json_decode(file_get_contents($rootfolder . '/source/txt/systems.txt'), TRUE);
 $regions = json_decode(file_get_contents($rootfolder . '/source/txt/regions.txt'), TRUE);
