@@ -15,7 +15,7 @@ $link = mysqli_connect($host, $user, $pw, $base);
 mysqli_set_charset($link, "utf8");
 
 // Селектим дневную стату
-$q = mysqli_query($link, 'SELECT SQL_CACHE * FROM activity_daily');
+$q = mysqli_query($link, 'SELECT * FROM activity_daily');
 if (!$q) echo mysqli_error($link);
 
 // Собираем из этого удобоваримый массив
@@ -24,7 +24,7 @@ while ($row = mysqli_fetch_assoc($q)) {
 }
 
 // Селектим месячную стату
-$q = mysqli_query($link, 'SELECT SQL_CACHE * FROM activity_monthly');
+$q = mysqli_query($link, 'SELECT * FROM activity_monthly');
 if (!$q) echo mysqli_error($link);
 
 // И из этого тоже собираем удобоваримый массив
