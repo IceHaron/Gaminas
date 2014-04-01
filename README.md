@@ -1,4 +1,4 @@
 Gaminas
 ====
 
-SupaDupaMegaSite
+Tool to charge games

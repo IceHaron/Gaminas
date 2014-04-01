@@ -28,10 +28,10 @@ class wtf_four {	//<< Переименовать класс в <папка>_<к�
 	
 	public static function level($par) {
 		global $GAMINAS;
-		foreach ($par as $thispar) {
-		var_dump($thispar);
-			$GAMINAS['backtrace'][] = $thispar;
-		}
+		
+		// foreach (json_decode(file_get_contents($GAMINAS['rootfolder'] . '/source/txt/systems.txt'), TRUE) as $sysid => $sysinfo) {
+			// echo "$sysid => <br/>";
+		// }
 	}
 
 }

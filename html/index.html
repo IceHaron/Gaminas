@@ -3,12 +3,13 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
   <title>Gaminas</title>
   <link type="text/css" rel="stylesheet" href="<?=$GAMINAS['source']?>/css/main.css"></link>
-	<!-- Подгрузка стилей в зависимости от адреса -->
-	<? if (@$GAMINAS['folder'] !== '') {?>
-  <link type="text/css" rel="stylesheet" href="<?=$GAMINAS['source']?>/css/<?=$GAMINAS['folder']?>.css"></link>
-	<? } ?>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
   <script src="<?=$GAMINAS['source']?>/js/main.js"></script>
+	<!-- Подгрузка стилей и скриптов в зависимости от адреса -->
+	<? if (@$GAMINAS['folder'] !== '') {?>
+		<link type="text/css" rel="stylesheet" href="<?=$GAMINAS['source']?>/css/<?=$GAMINAS['folder']?>.css"></link>
+		<script src="<?=$GAMINAS['source']?>/js/<?=$GAMINAS['folder']?>.js"></script>
+	<? } ?>
 </head>
 
 <?
@@ -38,7 +39,7 @@
 -->
 <!-- Логинизация от uLogin -->
         <script src="//ulogin.ru/js/ulogin.js"></script>
-        <div id="uLogin" data-ulogin="display=panel;fields=uid;providers=steam;hidden=;redirect_uri=;receiver=http%3A%2F%2Fgaminas.ice%2Fxd_custom.htm;callback=login">
+        <div id="uLogin" data-ulogin="display=buttons;fields=uid;providers=steam;hidden=;redirect_uri=;receiver=http%3A%2F%2Fgaminas.ice%2Fxd_custom.htm;callback=login">
           <img src="<?=$GAMINAS['source']?>/img/steam.png" data-uloginbutton="steam"/>
         </div>
         <? } else { ?>																													<!-- Если мы уже залогинились -->
@@ -70,7 +71,6 @@
           <a href="/trade"><div class="topmenunode">Обмен</div></a>
           <a href="/news"><div class="topmenunode">Новости</div></a>
           <a href="/contact"><div class="topmenunode">Контакты</div></a>
-          <a href="/wtf/systemstats/show"><div class="topmenunode">Статистика</div></a>
           <a href="/wtf/four/level/addr"><div class="topmenunode" style="float:right;">WTF</div></a>
 					<div class="clear"></div>
       </div>
