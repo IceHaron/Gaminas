@@ -14,12 +14,11 @@ class wtf_four {	//<< Переименовать класс в <папка>_<к�
 	}
 	
 	private function wtf_four() {	// << переименовать конструктор под стать классу
-		global $GAMINAS;
 		
-		$GAMINAS['maincaption'] = 'Заголовок страницы';
-		$GAMINAS['mainsupport'] = 'Содержание вспомогательного блока';
-		$GAMINAS['maincontent'] = 'Содержание центрального блока';
-		$GAMINAS['backtrace'][] = 'initialized wtf/four';
+		root::$_ALL['maincaption'] = 'Заголовок страницы';
+		root::$_ALL['mainsupport'] = 'Содержание вспомогательного блока';
+		root::$_ALL['maincontent'] = 'Содержание центрального блока';
+		root::$_ALL['backtrace'][] = 'initialized wtf/four';
 	}
 	
 	
@@ -27,9 +26,8 @@ class wtf_four {	//<< Переименовать класс в <папка>_<к�
 	
 	
 	public static function level($par) {
-		global $GAMINAS;
-		
-		// foreach (json_decode(file_get_contents($GAMINAS['rootfolder'] . '/source/txt/systems.txt'), TRUE) as $sysid => $sysinfo) {
+		// echo file_get_contents('http://steamcommunity.com/profiles/76561198131843447/inventory/json/753/1');
+		// foreach (json_decode(file_get_contents(root::$_ALL['rootfolder'] . '/source/txt/systems.txt'), TRUE) as $sysid => $sysinfo) {
 			// echo "$sysid => <br/>";
 		// }
 	}

@@ -19,25 +19,26 @@ class library_index {
 *	
 */
 	public function library_index() {
-		global $GAMINAS;
-
-// Library
-		$lib_str = file_get_contents('http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=0BE85074D210A01F70B48205C44D1D56&steamid=' . $GAMINAS['uid'] . '&format=json&include_appinfo=1');
-		$json = json_decode($lib_str);																							// Разбираем полученную строку на массив
-		$gamearray = $json->response->games;
 		$gamestable = '';
-    foreach ($gamearray as $num => $gameinfo) {																	// И клеим ее обратно в строку :D только другую
-			$gamestable .= '
-				<div class="gamefield">
-					<img class="gamelogo" src="http://media.steampowered.com/steamcommunity/public/images/apps/' . $gameinfo->appid . '/' . $gameinfo->img_logo_url . '.jpg">
-          <span class="gamename">' . $gameinfo->name . '</span>
-        </div>
-			';
+		
+		if (root::$_ALL['uid'] != '0') {
+// Library
+			$lib_str = file_get_contents('http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=0BE85074D210A01F70B48205C44D1D56&steamid=' . root::$_ALL['uid'] . '&format=json&include_appinfo=1');
+			$json = json_decode($lib_str);																							// Разбираем полученную строку на массив
+			$gamearray = $json->response->games;
+	    foreach ($gamearray as $num => $gameinfo) {																	// И клеим ее обратно в строку :D только другую
+				$gamestable .= '
+					<div class="gamefield">
+						<img class="gamelogo" src="http://media.steampowered.com/steamcommunity/public/images/apps/' . $gameinfo->appid . '/' . $gameinfo->img_logo_url . '.jpg">
+	          <span class="gamename">' . $gameinfo->name . '</span>
+	        </div>
+				';
+			}
 		}
 // Определяем заголовок страницы и содержимое центрального блока.
-		$GAMINAS['maincaption'] = 'Библиотека ваших игр';
-		$GAMINAS['mainsupport'] = '<input id="namesearch" type="text" placeholder="Название"/><div id="filtercomment"></div>';
-		$GAMINAS['maincontent'] = $gamestable;
+		root::$_ALL['maincaption'] = 'Библиотека ваших игр';
+		root::$_ALL['mainsupport'] = '<input id="namesearch" type="text" placeholder="Название"/><div id="filtercomment"></div>';
+		root::$_ALL['maincontent'] = $gamestable;
 	}
 }
 

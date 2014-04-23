@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-  <title>Gaminas</title>
-  <link type="text/css" rel="stylesheet" href="<?=$GAMINAS['source']?>/css/main.css"></link>
+  <title><?=root::$_ALL['maintitle']?> &mdash; Gaminas</title>
+  <link type="text/css" rel="stylesheet" href="<?=root::$_ALL['source']?>/css/main.css"></link>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-  <script src="<?=$GAMINAS['source']?>/js/main.js"></script>
+  <script src="<?=root::$_ALL['source']?>/js/main.js"></script>
 	<!-- Подгрузка стилей и скриптов в зависимости от адреса -->
-	<? if (@$GAMINAS['folder'] !== '') {?>
-		<link type="text/css" rel="stylesheet" href="<?=$GAMINAS['source']?>/css/<?=$GAMINAS['folder']?>.css"></link>
-		<script src="<?=$GAMINAS['source']?>/js/<?=$GAMINAS['folder']?>.js"></script>
+	<? if (@root::$_ALL['folder'] !== '') {?>
+		<link type="text/css" rel="stylesheet" href="<?=root::$_ALL['source']?>/css/<?=root::$_ALL['folder']?>.css"></link>
+		<script src="<?=root::$_ALL['source']?>/js/<?=root::$_ALL['folder']?>.js"></script>
 	<? } ?>
 </head>
 
@@ -32,7 +32,7 @@
 			
 <!-- АВАТАРКА, ЛОГИНИЗАЦИЯ И ПРОЧЕЕ -->
       <div id="righthead">
-        <? if ($GAMINAS['uid'] === 0) { ?>																			<!-- Если мы не авторизованы -->
+        <? if (root::$_ALL['uid'] === 0) { ?>																			<!-- Если мы не авторизованы -->
 <!-- Закомментил на случай если вдруг все перестанет работать
         <script src="//ulogin.ru/js/ulogin.js"></script>
         <div id="uLogin" data-ulogin="display=panel;fields=first_name,last_name;providers=steam;hidden=;redirect_uri=http%3A%2F%2Fgaminas.ice"></div>
@@ -40,13 +40,13 @@
 <!-- Логинизация от uLogin -->
         <script src="//ulogin.ru/js/ulogin.js"></script>
         <div id="uLogin" data-ulogin="display=buttons;fields=uid;providers=steam;hidden=;redirect_uri=;receiver=http%3A%2F%2Fgaminas.ice%2Fxd_custom.htm;callback=login">
-          <img src="<?=$GAMINAS['source']?>/img/steam.png" data-uloginbutton="steam"/>
+          <img src="<?=root::$_ALL['source']?>/img/steam.png" data-uloginbutton="steam"/>
         </div>
         <? } else { ?>																													<!-- Если мы уже залогинились -->
-        <a target="blank" href="<?=$GAMINAS['profurl']?>">
+        <a target="blank" href="<?=root::$_ALL['profurl']?>">
 					<div id="loginholder">
-						<div id="login"><?=$GAMINAS['username']?></div>
-						<img id="head_ava" src="<?=$GAMINAS['avatar']?>"/>
+						<div id="login"><?=root::$_ALL['username']?></div>
+						<img id="head_ava" src="<?=root::$_ALL['avatar']?>"/>
 					</div>
 				</a>
         <button id="logoff">Logoff</button>
@@ -90,12 +90,12 @@
 		<div id="footer">
 			<div id="backtrace">
 				<label>Backtrace</label>
-				<? foreach($GAMINAS['backtrace'] as $message) { ?>
+				<? foreach(root::$_ALL['backtrace'] as $message) { ?>
 					<p><?=$message?></p>
 				<? } ?>
 				<div class="clear"></div>
 			</div>
-			<? if (isset($GAMINAS['todo'])) { ?>
+			<? if (isset(root::$_ALL['todo'])) { ?>
 			<table id="todo" cellpadding="3">
 				<thead>
 					<tr>
@@ -105,7 +105,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<?foreach ($GAMINAS['todo'] as $k => $todoarr) {?>
+					<?foreach (root::$_ALL['todo'] as $k => $todoarr) {?>
 							<tr class="todotr">
 								<td class="<?=$todoarr['state'].' '.$todoarr['class']?> left">
 									<?=$todoarr['class']?>
